@@ -27,12 +27,12 @@ renderHeader('Admin Dashboard', 'dashboard');
 <!-- Stat Cards -->
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3">
-    <div class="stat-card">
+    <div class="stat-card"><a href="admin_students.php">
       <div class="stat-icon mb-3" style="background:#dbeafe;color:#3b82f6">
         <i class="bi bi-person-badge-fill"></i>
       </div>
       <div class="stat-value"><?= (int)$totalStudents ?></div>
-      <div class="stat-label mt-1">Total Students</div>
+      <div class="stat-label mt-1">Total Students</div></a>
     </div>
   </div>
   <div class="col-6 col-md-3">
