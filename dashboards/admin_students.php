@@ -167,7 +167,7 @@ if (isset($_GET['edit'])) {
 
 // ── Student list ───────────────────────────────────────────
 $search = trim($_GET['search'] ?? '');
-$where  = "WHERE u.role='student'";
+$where  = "WHERE u.role='student' AND u.status='active'";
 $params = [];
 if ($search) {
     $where   .= ' AND (u.full_name LIKE ? OR s.father_name LIKE ? OR s.roll_number LIKE ?)';

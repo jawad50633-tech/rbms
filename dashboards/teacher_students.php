@@ -25,7 +25,7 @@ $classInfo = $classInfo->fetch();
 
 // Students IN teacher's class only — never shows other classes
 $search  = trim($_GET['search'] ?? '');
-$where   = 'WHERE s.class_id = ?';
+$where   = 'WHERE s.class_id = ? AND u.status = \'active\'';
 $params  = [$myClassId];
 if ($search) {
     $where   .= ' AND (u.full_name LIKE ? OR s.roll_number LIKE ? OR s.father_name LIKE ?)';

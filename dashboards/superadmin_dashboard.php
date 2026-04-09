@@ -12,7 +12,7 @@ $stats = $db->query(
        SUM(role = "super_admin") AS total_superadmins,
        SUM(role = "admin")       AS total_admins,
        SUM(role = "teacher")     AS total_teachers,
-       SUM(role = "student")     AS total_students,
+       SUM(role = "student" AND status = "active") AS total_students,
        COUNT(*)                  AS total_users
      FROM users'
 )->fetch();
@@ -24,6 +24,7 @@ $totalSubmissions = $db->query('SELECT COUNT(*) FROM submissions')->fetchColumn(
 $recentUsers = $db->query(
     'SELECT id, full_name, username, role, status, created_at
      FROM users
+     WHERE NOT (role = \'student\' AND status = \'inactive\')
      ORDER BY created_at DESC
      LIMIT 8'
 )->fetchAll();

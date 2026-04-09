@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_fee'])) {
 
 // ── Fetch all students with fee status ─────────────────────
 $search = trim($_GET['search'] ?? '');
-$where  = 'WHERE u.role = "student"';
+$where  = 'WHERE u.role = "student" AND u.status = \'active\'';
 $params = [];
 if ($search) {
     $where  .= ' AND (u.full_name LIKE ? OR s.roll_number LIKE ?)';
