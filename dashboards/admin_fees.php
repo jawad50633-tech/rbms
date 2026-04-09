@@ -190,7 +190,7 @@ renderHeader('Fees Manager', 'fees');
           <i class="bi bi-safe2-fill me-2 text-primary"></i>
           Fees Manager — <span class="text-muted fw-400"><?= date('F Y') ?></span>
         </h6>
-        <small class="text-muted"><?= count($students) ?> students</small>
+        <small class="text-muted" data-students><?= count($students) ?> students</small>
       </div>
       <div class="d-flex gap-2 align-items-center">
         <form method="GET" class="d-flex gap-2">
@@ -225,7 +225,7 @@ renderHeader('Fees Manager', 'fees');
       </thead>
       <tbody>
         <?php foreach ($students as $s): ?>
-        <tr>
+        <tr data-students>
           <td class="ps-4">
             <div class="d-flex align-items-center gap-2">
               <div class="table-avatar-placeholder">

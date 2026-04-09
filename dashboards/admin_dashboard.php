@@ -26,16 +26,16 @@ renderHeader('Admin Dashboard', 'dashboard');
 
 <!-- Stat Cards -->
 <div class="row g-3 mb-4">
-  <div class="col-6 col-md-3">
-    <div class="stat-card"><a href="admin_students.php">
+  <div class="col-6 col-md-3" data-students>
+    <div class="stat-card">
       <div class="stat-icon mb-3" style="background:#dbeafe;color:#3b82f6">
         <i class="bi bi-person-badge-fill"></i>
       </div>
       <div class="stat-value"><?= (int)$totalStudents ?></div>
-      <div class="stat-label mt-1">Total Students</div></a>
+      <div class="stat-label mt-1">Total Students</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3" data-students>
     <div class="stat-card">
       <div class="stat-icon mb-3" style="background:#d1fae5;color:#10b981">
         <i class="bi bi-check-circle-fill"></i>
@@ -44,7 +44,7 @@ renderHeader('Admin Dashboard', 'dashboard');
       <div class="stat-label mt-1">Portal Active</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3" data-students>
     <div class="stat-card">
       <div class="stat-icon mb-3" style="background:#fef3c7;color:#f59e0b">
         <i class="bi bi-clock-fill"></i>
@@ -53,7 +53,7 @@ renderHeader('Admin Dashboard', 'dashboard');
       <div class="stat-label mt-1">Awaiting Login Setup</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3" data-students>
     <div class="content-card d-flex align-items-center justify-content-center p-3">
       <a href="admin_students.php?action=add" class="btn btn-primary w-100">
         <i class="bi bi-person-plus-fill me-1"></i>Enroll Student
@@ -64,7 +64,7 @@ renderHeader('Admin Dashboard', 'dashboard');
 
 <?php if ($pendingStudents > 0): ?>
 <!-- Reminder for pending logins -->
-<div class="alert alert-warning d-flex align-items-center gap-2 mb-4">
+<div class="alert alert-warning d-flex align-items-center gap-2 mb-4" data-students>
   <i class="bi bi-exclamation-triangle-fill fs-5"></i>
   <div>
     <strong><?= (int)$pendingStudents ?> student(s)</strong> are enrolled but don't have portal login access yet.
@@ -74,7 +74,7 @@ renderHeader('Admin Dashboard', 'dashboard');
 <?php endif; ?>
 
 <!-- Recent Students -->
-<div class="content-card">
+<div class="content-card" data-students>
   <div class="card-header-custom">
     <h6><i class="bi bi-person-badge me-2 text-primary"></i>Recently Enrolled Students</h6>
     <a href="admin_students.php" class="btn btn-sm btn-outline-primary">View All</a>
