@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 try {
     $placeholder_email = 'student_' . uniqid() . '@placeholder.local'; // ← unique placeholder
     $db->prepare(
-        'INSERT INTO users (full_name, username, password, role, status, email) VALUES (?, ?, ?, "student", "inactive", ?)'
+        'INSERT INTO users (full_name, username, password, role, status, email) VALUES (?, ?, ?, "student", "active", ?)'
     )->execute([$fullName, $placeholder_username, $placeholder_password, $placeholder_email]);
     $newUserId = (int)$db->lastInsertId();
 } catch (PDOException $e) {
