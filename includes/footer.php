@@ -24,7 +24,7 @@ document.addEventListener('click', function(e) {
   if (window.innerWidth < 992 &&
       sidebar.classList.contains('show') &&
       !sidebar.contains(e.target) &&
-      e.target !== toggle) {
+      !toggle.contains(e.target)) {
     sidebar.classList.remove('show');
   }
 });
