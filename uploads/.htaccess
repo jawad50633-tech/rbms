@@ -1,0 +1,17 @@
+# Block script execution
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Only allow safe file types
+<FilesMatch "\.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif)$">
+    Allow from all
+</FilesMatch>
+
+# Prevent hotlinking (optional, adjust domain)
+# RewriteEngine On
+# RewriteCond %{HTTP_REFERER} !^https://yourdomain\.com/ [NC]
+# RewriteRule \.(pdf|zip|doc)$ - [F,L]
