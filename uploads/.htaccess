@@ -7,11 +7,11 @@
 Options -Indexes
 
 # Only allow safe file types
-<FilesMatch "\.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif)$">
+<FilesMatch "\.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif|pptx)$">
     Allow from all
 </FilesMatch>
 
 # Prevent hotlinking (optional, adjust domain)
 # RewriteEngine On
 # RewriteCond %{HTTP_REFERER} !^https://yourdomain\.com/ [NC]
-# RewriteRule \.(pdf|zip|doc)$ - [F,L]
+# RewriteRule \.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif|pptx)$ - [F,L]

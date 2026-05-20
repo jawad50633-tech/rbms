@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        'application/pdf',
        'application/msword',
        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+       'application/vnd.openxmlformats-officedocument.presentationml.presentation',
        'application/zip',
        'application/x-zip-compressed',
 
@@ -85,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        'image/webp',
        'image/svg+xml'
         ];
-        $allowedExts = ['pdf', 'doc', 'docx', 'zip', 'jpg','png','jpeg'];
+        $allowedExts = ['pdf', 'doc', 'docx','ppt','pptx', 'zip', 'jpg','png','jpeg'];
 
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime  = $finfo->file($file['tmp_name']);
         $ext   = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
         if (!in_array($mime, $allowedMimes) || !in_array($ext, $allowedExts)) {
-            $errors[] = 'Only PDF, DOC, DOCX,jpg, jpeg, png, and ZIP files are allowed.';
+            $errors[] = 'Only PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, and ZIP files are allowed.';
         } elseif ($file['size'] > MAX_FILE_SIZE) {
             $errors[] = 'File size exceeds ' . formatBytes(MAX_FILE_SIZE) . ' limit.';
         } elseif ($file['error'] !== UPLOAD_ERR_OK) {
@@ -186,7 +187,7 @@ renderHeader($submitAssignment ? 'Submit Assignment' : 'My Assignments', 'assign
           <div class="mt-2" id="fileNameDisplay"></div>
         </div>
         <input type="file" class="d-none" name="file" id="fileInput"
-               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required
+               accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" required
                onchange="document.getElementById('fileNameDisplay').innerHTML=
                '<span class=\'badge bg-success mt-1\'><i class=\'bi bi-file-earmark-check me-1\'></i>'+this.files[0].name+'</span>'">
       </div>
