@@ -183,7 +183,7 @@ renderHeader($submitAssignment ? 'Submit Assignment' : 'My Assignments', 'assign
              onclick="document.getElementById('fileInput').click()">
           <i class="bi bi-cloud-upload-fill text-primary" style="font-size:2.5rem"></i>
           <div class="fw-600 mt-2 small">Click to browse or drag & drop</div>
-          <div class="text-muted" style="font-size:.78rem">Accepted: PDF, DOC, DOCX, JPG, JPEG, PNG · Max: <?= formatBytes(MAX_FILE_SIZE) ?></div>
+          <div class="text-muted" style="font-size:.78rem">Accepted: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG · Max: <?= formatBytes(MAX_FILE_SIZE) ?></div>
           <div class="mt-2" id="fileNameDisplay"></div>
         </div>
         <input type="file" class="d-none" name="file" id="fileInput"
