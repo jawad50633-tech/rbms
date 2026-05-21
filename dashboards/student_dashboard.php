@@ -206,7 +206,7 @@ renderHeader('Student Dashboard', 'dashboard');
               <?= round($rpct) ?>%
             </div>
           <?php else: ?>
-            <div class="mb-2">
+            <div class="mb-1" style="color:#64748b;font-size:.9rem">
               <i class="bi bi-dash-circle me-1"></i>No re-exam taken
             </div>
           <?php endif; ?>
