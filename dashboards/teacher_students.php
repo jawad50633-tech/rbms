@@ -233,14 +233,12 @@ renderHeader('My Students', 'students');
           <!-- Marks button -->
           <td>
             <button type="button"
-                    class="btn btn-sm btn-outline-info"
-                    onclick="openMarksModal(
-                      <?= $s['id'] ?>,
-                      <?= json_encode($s['full_name']) ?>,
-                      <?= $exam   !== null ? $exam   : 'null' ?>,
-                      <?= $reexam !== null ? $reexam : 'null' ?>,
-                      <?= $total ?>
-                    )">
+                    class="btn btn-sm btn-outline-info btn-marks"
+                    data-uid="<?= $s['id'] ?>"
+                    data-name="<?= htmlspecialchars($s['full_name'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-exam="<?= $exam   !== null ? $exam   : '' ?>"
+                    data-reexam="<?= $reexam !== null ? $reexam : '' ?>"
+                    data-total="<?= $total ?>">
               <i class="bi bi-pencil-square me-1"></i>Marks
             </button>
           </td>
@@ -362,29 +360,42 @@ renderHeader('My Students', 'students');
 
 <!-- ── JavaScript ───────────────────────────────────────────────────────── -->
 <script>
-// Open modal and pre-fill existing values
-function openMarksModal(userId, name, exam, reexam, total) {
-  document.getElementById('modalStudentId').value   = userId;
+// Open modal via data-attributes — safe against apostrophes/special chars in names
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn-marks');
+  if (!btn) return;
+
+  const userId = btn.dataset.uid;
+  const name   = btn.dataset.name;
+  const exam   = btn.dataset.exam;
+  const reexam = btn.dataset.reexam;
+  const total  = parseFloat(btn.dataset.total) || 100;
+
+  document.getElementById('modalStudentId').value         = userId;
   document.getElementById('modalStudentName').textContent = name;
+  document.getElementById('modalTotal').value             = total;
 
-  const totalVal = total || 100;
-  document.getElementById('modalTotal').value = totalVal;
-
-  // Set total select (fallback to 100 if not in list)
+  // Set total select (fallback to 100 if value not in list)
   const sel = document.getElementById('modalTotalSelect');
-  sel.value = totalVal;
-  if (sel.value != totalVal) sel.value = 100;   // guard
+  sel.value = total;
+  if (parseFloat(sel.value) !== total) sel.value = 100;
 
-  document.getElementById('modalExamMarks').value   = exam   !== null ? exam   : '';
-  document.getElementById('modalReexamMarks').value = reexam !== null ? reexam : '';
+  document.getElementById('modalExamMarks').value   = exam;
+  document.getElementById('modalReexamMarks').value = reexam;
 
-  // Clear errors
+  // Clear any previous errors
   document.getElementById('examError').textContent   = '';
   document.getElementById('reexamError').textContent = '';
 
   updateMaxHints();
-  new bootstrap.Modal(document.getElementById('marksModal')).show();
-}
+
+  // Compatible with both Bootstrap 4 and Bootstrap 5
+  if (typeof bootstrap !== 'undefined') {
+    new bootstrap.Modal(document.getElementById('marksModal')).show();
+  } else {
+    $('#marksModal').modal('show');
+  }
+});
 
 function updateMaxHints() {
   const total = document.getElementById('modalTotal').value || 100;
@@ -451,7 +462,12 @@ function saveMarks() {
         document.getElementById('reexam-cell-' + userId).innerHTML = reexamBadge;
 
         // Close modal
-        bootstrap.Modal.getInstance(document.getElementById('marksModal')).hide();
+        // Hide modal — compatible with Bootstrap 4 and 5
+        if (typeof bootstrap !== 'undefined') {
+          bootstrap.Modal.getInstance(document.getElementById('marksModal')).hide();
+        } else {
+          $('#marksModal').modal('hide');
+        }
 
         // Show success alert
         const alert = document.getElementById('saveAlert');
