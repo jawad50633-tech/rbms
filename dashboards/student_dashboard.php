@@ -152,7 +152,7 @@ renderHeader('Student Dashboard', 'dashboard');
               <?= round($pct) ?>%
             </div>
           <?php else: ?>
-            <div class="text-muted small py-2">
+            <div class="py-2">
               <i class="bi bi-clock me-1"></i>Not yet recorded
             </div>
           <?php endif; ?>
@@ -206,7 +206,7 @@ renderHeader('Student Dashboard', 'dashboard');
               <?= round($rpct) ?>%
             </div>
           <?php else: ?>
-            <div class="text-muted small py-2">
+            <div class="mb-2">
               <i class="bi bi-dash-circle me-1"></i>No re-exam taken
             </div>
           <?php endif; ?>
