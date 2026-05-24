@@ -20,7 +20,7 @@ define('DB_CHAR', 'utf8mb4');
 // ─── Upload Paths ───────────────────────────────────────────
 define('UPLOAD_PHOTOS',      BASE_PATH . '/uploads/photos/');
 define('UPLOAD_ASSIGNMENTS', BASE_PATH . '/uploads/assignments/');
-define('MAX_FILE_SIZE',      10 * 1024 * 1024);   // 10 MB
+define('MAX_FILE_SIZE',      100 * 1024 * 1024);   // 10 MB
 
 // ─── Session ────────────────────────────────────────────────
 define('SESSION_NAME',    'rbms_session');
