@@ -7,7 +7,7 @@
 Options -Indexes
 
 # Only allow safe file types
-<FilesMatch "\.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif|pptx)$">
+<FilesMatch "\.(pdf|doc|docx|zip|jpg|jpeg|png|webp|ppt|xlsx|mp4|gif|pptx)$">
     Allow from all
 </FilesMatch>
 
