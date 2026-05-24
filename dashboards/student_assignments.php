@@ -108,34 +108,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'File upload error. Please try again.';
         } else {
             $allowedMimes = [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-powerpoint',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                'application/zip',
-                'application/x-zip-compressed',
-                'video/mp4',
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-                'image/webp',
-            ];
+    // Documents
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+
+    // PowerPoint
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+
+    // ZIP
+    'application/zip',
+    'application/x-zip-compressed',
+
+    // Images
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+
+    // Video — expanded
+    'video/mp4',
+    'video/mpeg',
+    'video/x-msvideo',   // AVI
+    'video/quicktime',   // MOV
+    'video/x-matroska',  // MKV
+    'video/webm',
+    'video/x-ms-wmv',    // WMV
+    'video/3gpp',        // 3GP
+    'video/x-flv',       // FLV
+];
+
+            
 
             $allowedExts = [
-                'pdf', 'doc', 'docx',
-                'ppt', 'pptx',
-                'zip',
-                'jpg', 'jpeg', 'png', 'gif', 'webp',
-                'mp4',
-            ];
+    'pdf', 'doc', 'docx',
+    'ppt', 'pptx',
+    'zip',
+    'jpg', 'jpeg', 'png', 'gif', 'webp',
+
+    // Video — expanded
+    'mp4', 'mpeg', 'mpg',
+    'avi',
+    'mov',
+    'mkv',
+    'webm',
+    'wmv',
+    '3gp',
+    'flv',
+];
+
 
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mime  = $finfo->file($file['tmp_name']);
             $ext   = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
             if (!in_array($mime, $allowedMimes) || !in_array($ext, $allowedExts)) {
-                $errors[] = 'Only PDF, DOC, DOCX, PPT, PPTX, ZIP, JPG, PNG, GIF, WEBP and MP4 files are allowed.';
+                $errors[] = 'Only PDF, DOC, DOCX, PPT, PPTX, ZIP, JPG, PNG, GIF, WEBP, MP4, AVI, MOV, MKV, WEBM, WMV, MPEG, 3GP and FLV files are allowed.';
+
             } elseif ($file['size'] > MAX_FILE_SIZE) {
                 $errors[] = 'File size exceeds ' . formatBytes(MAX_FILE_SIZE) . ' limit.';
             }
@@ -262,14 +292,20 @@ renderHeader(
                         <i class="bi bi-cloud-upload-fill text-primary" style="font-size:2.5rem"></i>
                         <div class="fw-600 mt-2 small">Click to browse or drag &amp; drop</div>
                         <div class="text-muted" style="font-size:.78rem">
-                            Accepted: PDF, DOC, DOCX, PPT, PPTX, ZIP, JPG, PNG, GIF, WEBP, MP4
-                            &nbsp;·&nbsp; Max: <?= formatBytes(MAX_FILE_SIZE) ?>
-                        </div>
+    Accepted: PDF, DOC, DOCX, PPT, PPTX, ZIP,
+    JPG, PNG, GIF, WEBP,
+    MP4, AVI, MOV, MKV, WEBM, WMV, MPEG, 3GP, FLV
+    &nbsp;·&nbsp; Max: <?= formatBytes(MAX_FILE_SIZE) ?>
+</div>
+
                         <div class="mt-2" id="fileNameDisplay"></div>
                     </div>
 
                     <input type="file" class="d-none" name="file" id="fileInput"
-                           accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.jpg,.jpeg,.png,.gif,.webp,.mp4"
+                          accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,
+        .jpg,.jpeg,.png,.gif,.webp,
+        .mp4,.mpeg,.mpg,.avi,.mov,.mkv,.webm,.wmv,.3gp,.flv"
+
                            required>
                 </div>
 
