@@ -188,7 +188,7 @@ renderHeader($submitAssignment ? 'Submit Assignment' : 'My Assignments', 'assign
           <div class="mt-2" id="fileNameDisplay"></div>
         </div>
         <input type="file" class="d-none" name="file" id="fileInput"
-               accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" required
+               accept=".pdf,.doc,.docx,.ppt,.pptx,.html,.jpg,.jpeg,.png" required
                onchange="document.getElementById('fileNameDisplay').innerHTML=
                '<span class=\'badge bg-success mt-1\'><i class=\'bi bi-file-earmark-check me-1\'></i>'+this.files[0].name+'</span>'">
       </div>
