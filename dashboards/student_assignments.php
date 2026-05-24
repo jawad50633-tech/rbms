@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
        'application/zip',
        'application/x-zip-compressed',
-
+       'video/mp4',
        // Image types
        'image/jpeg',
        'image/png',
@@ -86,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        'image/webp',
        'image/svg+xml'
         ];
-        $allowedExts = ['pdf', 'doc', 'docx','ppt','pptx', 'zip', 'jpg','png','jpeg'];
+        $allowedExts = ['pdf', 'doc', 'docx','ppt','pptx', 'zip', 'jpg','png','jpeg','mp4'];
 
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime  = $finfo->file($file['tmp_name']);
         $ext   = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
         if (!in_array($mime, $allowedMimes) || !in_array($ext, $allowedExts)) {
-            $errors[] = 'Only PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, and ZIP files are allowed.';
+            $errors[] = 'Only PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, mp4, and ZIP files are allowed.';
         } elseif ($file['size'] > MAX_FILE_SIZE) {
             $errors[] = 'File size exceeds ' . formatBytes(MAX_FILE_SIZE) . ' limit.';
         } elseif ($file['error'] !== UPLOAD_ERR_OK) {
