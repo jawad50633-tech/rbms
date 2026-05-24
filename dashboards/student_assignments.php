@@ -18,8 +18,16 @@ $studentInfo = $studentStmt->fetch();
 
 $classId = $studentInfo['class_id'] ?? null;
 
+// FIX #7 — Guard against students with no assigned class.
+// A student without a class_id should not be able to view or submit assignments.
+if (!$classId) {
+    setFlash('warning', 'You are not assigned to a class. Please contact your administrator.');
+    header('Location: dashboard.php');
+    exit;
+}
+
 // ─────────────────────────────────────────────────────────────
-// Assignment to Submit
+// Assignment to Submit (GET)
 // ─────────────────────────────────────────────────────────────
 $submitId         = (int)($_GET['submit'] ?? 0);
 $submitAssignment = null;
@@ -38,6 +46,13 @@ if ($submitId) {
     $submitAssignment = $st->fetch();
 
     if ($submitAssignment) {
+
+        // FIX #5 — Check overdue on the GET (display) path too, not only on POST.
+        if (!empty($submitAssignment['due_date']) && strtotime($submitAssignment['due_date']) < time()) {
+            setFlash('warning', 'The submission deadline for this assignment has passed.');
+            header('Location: student_assignments.php');
+            exit;
+        }
 
         $already = $db->prepare(
             'SELECT id FROM submissions
@@ -77,12 +92,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $st->execute([$assignId, $classId]);
     $assignment = $st->fetch();
 
+    // FIX #2 — Explicit error if assignment not found; prevents falling through
+    // to file operations with a null $assignment.
     if (!$assignment) {
         $errors[] = 'Assignment not found or access denied.';
     }
 
     // Prevent overdue submissions
+    // FIX #4 — NULL due_date is intentionally treated as "no deadline".
+    // Document this clearly. If a deadline is always required, enforce NOT NULL
+    // at the DB schema level and remove the !empty() guard here.
     if (
+        empty($errors) &&
         $assignment &&
         !empty($assignment['due_date']) &&
         strtotime($assignment['due_date']) < time()
@@ -103,11 +124,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Validate file selected
-    if (empty($_FILES['file']['name'])) {
+    if (empty($errors) && empty($_FILES['file']['name'])) {
         $errors[] = 'Please select a file to upload.';
     }
 
-    // File validation
+    // File validation — only runs when no earlier errors exist (FIX #2 gate)
     if (empty($errors)) {
 
         $file = $_FILES['file'];
@@ -141,6 +162,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Video
                 'video/mp4',
                 'video/mpeg',
+                // FIX #9 — finfo can report these MIME types for MPEG files
+                // depending on OS/libmagic version.
+                'video/x-mpeg',
+                'audio/mpeg',
                 'video/x-msvideo',
                 'video/quicktime',
                 'video/x-matroska',
@@ -172,17 +197,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Save file
+    // Save file + DB insert — wrapped in a transaction (FIX #6)
+    // File is moved only after the DB row is inserted successfully.
+    // On any failure the transaction is rolled back and the temp file
+    // (still in PHP's temp dir) is cleaned up automatically.
     if (empty($errors)) {
 
         $safeExt  = preg_replace('/[^a-zA-Z0-9]/', '', $ext);
         $fileName = bin2hex(random_bytes(16)) . '.' . $safeExt;
-        $filePath = rtrim(UPLOAD_ASSIGNMENTS, '/\\') . DIRECTORY_SEPARATOR . $fileName;
 
-        if (!move_uploaded_file($file['tmp_name'], $filePath)) {
-            $errors[] = 'Could not save file. Check upload folder permissions.';
-        } else {
+        // FIX #10 — Store a relative sub-path (e.g. "assignments/abc.pdf")
+        // so the record remains valid if the base upload root changes.
+        $relPath  = 'assignments' . DIRECTORY_SEPARATOR . $fileName;
+        $absPath  = rtrim(UPLOAD_BASE, '/\\') . DIRECTORY_SEPARATOR . $relPath;
 
+        // FIX #1 — UPLOAD_ASSIGNMENTS must be outside the web root.
+        // If it is inside the web root, add an .htaccess in that folder:
+        //   php_flag engine off
+        //   Options -ExecCGI
+        //   AddType application/octet-stream .php .php5 .phtml .phar
+        // This code assumes the directory is already protected.
+
+        try {
+            $db->beginTransaction();
+
+            // Insert DB row first — if this fails we never touch the filesystem.
             $insert = $db->prepare(
                 'INSERT INTO submissions
                  (assignment_id, student_id, file_name, file_path, file_size)
@@ -192,22 +231,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $assignId,
                 $user['id'],
                 $file['name'],
-                $fileName,
+                $relPath,       // FIX #10 — relative path, not bare filename
                 $file['size'],
             ]);
 
-            logActivity($user['id'], "Submitted assignment #{$assignId}", 'Submissions');
-            setFlash('success', 'Assignment submitted successfully!');
-            header('Location: student_assignments.php');
-            exit;
+            $newSubmissionId = $db->lastInsertId();
+
+            // Move the file only after the DB row is committed.
+            if (!move_uploaded_file($file['tmp_name'], $absPath)) {
+                // File move failed — roll back the DB row.
+                $db->rollBack();
+                $errors[] = 'Could not save file. Check upload folder permissions.';
+            } else {
+                $db->commit();
+                logActivity($user['id'], "Submitted assignment #{$assignId}", 'Submissions');
+                setFlash('success', 'Assignment submitted successfully!');
+                header('Location: student_assignments.php');
+                exit;
+            }
+
+        } catch (Exception $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            // Clean up the temp file if it was somehow moved before the exception.
+            if (isset($absPath) && file_exists($absPath)) {
+                unlink($absPath);
+            }
+            $errors[] = 'A database error occurred. Please try again.';
         }
     }
 }
 
 // ─────────────────────────────────────────────────────────────
 // Fetch All Assignments
+// FIX #3 — Use a distinct statement variable to avoid overwriting
+// the PDOStatement with its own result. Guard against fetchAll() failure.
 // ─────────────────────────────────────────────────────────────
-$allAssignments = $db->prepare(
+$assignStmt = $db->prepare(
     "SELECT
         a.*,
         u.full_name AS teacher_name,
@@ -226,8 +287,13 @@ $allAssignments = $db->prepare(
        AND (a.class_id IS NULL OR a.class_id = ?)
      ORDER BY a.due_date ASC"
 );
-$allAssignments->execute([$user['id'], $classId]);
-$allAssignments = $allAssignments->fetchAll();
+$assignStmt->execute([$user['id'], $classId]);
+$allAssignments = $assignStmt->fetchAll();
+
+// Guard against fetchAll() returning false on DB error
+if ($allAssignments === false) {
+    $allAssignments = [];
+}
 
 $csrf = csrfToken();
 
@@ -345,15 +411,42 @@ renderHeader(
 
     <script>
     (function () {
-        const zone    = document.getElementById('dropZone');
-        const input   = document.getElementById('fileInput');
-        const display = document.getElementById('fileNameDisplay');
+        // FIX #11 — Client-side file size check for instant feedback
+        var MAX_BYTES = <?= (int)MAX_FILE_SIZE ?>;
+
+        var zone    = document.getElementById('dropZone');
+        var input   = document.getElementById('fileInput');
+        var display = document.getElementById('fileNameDisplay');
 
         function showFile(file) {
+            // FIX #11 — Reject oversized files immediately in the browser
+            if (file.size > MAX_BYTES) {
+                display.innerHTML =
+                    '<span class="badge bg-danger mt-1">' +
+                    '<i class="bi bi-exclamation-triangle me-1"></i>' +
+                    'File too large (' + formatBytes(file.size) + '). Max is <?= formatBytes(MAX_FILE_SIZE) ?>.' +
+                    '</span>';
+                input.value = '';
+                return;
+            }
             display.innerHTML =
                 '<span class="badge bg-success mt-1">' +
                 '<i class="bi bi-file-earmark-check me-1"></i>' +
-                file.name + '</span>';
+                escHtml(file.name) + '</span>';
+        }
+
+        function escHtml(str) {
+            var d = document.createElement('div');
+            d.appendChild(document.createTextNode(str));
+            return d.innerHTML;
+        }
+
+        // FIX #11 — Simple byte formatter for client-side display
+        function formatBytes(bytes) {
+            if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(1) + ' GB';
+            if (bytes >= 1048576)    return (bytes / 1048576).toFixed(1) + ' MB';
+            if (bytes >= 1024)       return (bytes / 1024).toFixed(1) + ' KB';
+            return bytes + ' B';
         }
 
         input.addEventListener('change', function () {
@@ -377,10 +470,28 @@ renderHeader(
             zone.style.borderColor = '#cbd5e1';
 
             if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                const dt = new DataTransfer();
-                dt.items.add(e.dataTransfer.files[0]);
-                input.files = dt.files;
-                showFile(e.dataTransfer.files[0]);
+                // FIX #8 — DataTransfer assignment is not supported in all browsers.
+                // Test the assignment and fall back to showing a warning if it fails.
+                try {
+                    var dt = new DataTransfer();
+                    dt.items.add(e.dataTransfer.files[0]);
+                    input.files = dt.files;
+
+                    // Verify the assignment actually worked
+                    if (input.files && input.files.length > 0) {
+                        showFile(input.files[0]);
+                    } else {
+                        throw new Error('assignment failed');
+                    }
+                } catch (err) {
+                    // Browser does not support programmatic FileList assignment.
+                    // Show the filename visually but warn the user to use the picker.
+                    display.innerHTML =
+                        '<span class="badge bg-warning text-dark mt-1">' +
+                        '<i class="bi bi-exclamation-circle me-1"></i>' +
+                        'Drag &amp; drop not supported in this browser — please use the file picker.' +
+                        '</span>';
+                }
             }
         });
     })();
