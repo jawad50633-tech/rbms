@@ -1,0 +1,311 @@
+{
+    "description": "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action",
+    "version": "1.0.0",
+    "generatedTime": 1779653690832,
+    "data": [
+        {
+            "type": "file",
+            "name": "README.md",
+            "size": 5102,
+            "hash": "aa7a961d7394d2d1b37a346b627aeaebac4ffede08d84516476207386adda27c"
+        },
+        {
+            "type": "file",
+            "name": "config.php",
+            "size": 8400,
+            "hash": "6cc51d8ed1ccdca8df2a669d689f816ba9805d1d0457b95769635fd200922a70"
+        },
+        {
+            "type": "folder",
+            "name": "dashboards"
+        },
+        {
+            "type": "file",
+            "name": "database.sql",
+            "size": 8670,
+            "hash": "22133a73028b8b32bed0ef0d3d15fe96e6bb686eb4cb65c6f38be43e051580d8"
+        },
+        {
+            "type": "file",
+            "name": "fees_addon.sql",
+            "size": 3173,
+            "hash": "896e7f22f10416335126980c9cc62beced9e04df8a81e48ec016168ea214e762"
+        },
+        {
+            "type": "folder",
+            "name": "includes"
+        },
+        {
+            "type": "file",
+            "name": "login.php",
+            "size": 9378,
+            "hash": "e8aacafd53f5e9ed5f3348d4eb49672f0ad11541e0e823764ec7e116f91eff61"
+        },
+        {
+            "type": "file",
+            "name": "logout.php",
+            "size": 502,
+            "hash": "8cd38534676b76e06248ae3f833b149def157141e0ec3b3e38b9c324fafd44de"
+        },
+        {
+            "type": "file",
+            "name": "reset.php",
+            "size": 289,
+            "hash": "3ce4cdf3271a8cc3c7d35c80e38e9d361a0f7f20bc853dc81270ebd0377d340a"
+        },
+        {
+            "type": "file",
+            "name": "unlock.php",
+            "size": 202,
+            "hash": "c3b4c634eefa2ad7cc898b80223a86efb451cb121d4a9d1e08497440511f785c"
+        },
+        {
+            "type": "folder",
+            "name": "uploads"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/admin_classes.php",
+            "size": 5584,
+            "hash": "738d3f9329ff1b3b2debb2133af18e2d59d427fa242abc4ae00f3fd4f92319c1"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/admin_dashboard.php",
+            "size": 4982,
+            "hash": "7c13d20d0fc11ccea68c0310fce11facc6d8eae558d09c3452ac46445a7f66fa"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/admin_fees.php",
+            "size": 19700,
+            "hash": "40da11dddb13b038fb0759a7e6b6028298a6f530db2f25e1ee4874da7c7e98c7"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/admin_fees_audit.php",
+            "size": 8236,
+            "hash": "19d656b3fba8621a9c88702fd9cbbef6df26cea61a42cc8d432c823e6862dc61"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/admin_receipts.php",
+            "size": 14136,
+            "hash": "600764565bfbd3176bc1e966934f8069de04049a81b60cd953d8eaddbf37d536"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/admin_students.php",
+            "size": 22022,
+            "hash": "23aa7043cd83db487275289e7b1bdbe848aac77876e684c321394eb5d06267cd"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/student_assignments.php",
+            "size": 23567,
+            "hash": "04422db55ddcbf7ee92074bf69abb657973a70b84fb9231603a22e96ed80ae7a"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/student_dashboard.php",
+            "size": 11830,
+            "hash": "cb3d04d3c7f02747d3266cbdaebc7b5ea76262552c55e29f87765f3211622087"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/student_submissions.php",
+            "size": 2849,
+            "hash": "e00fe3c5e8bc384a54c93f92dd734ace27dd8f64baef481cc74cc9c9766f4fe9"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/superadmin_activity.php",
+            "size": 2132,
+            "hash": "8d22b755125631a670627e7508a9e425e655ddb3e1160f6662d1c9a24458982a"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/superadmin_classes.php",
+            "size": 12466,
+            "hash": "fadb9de1651eb6e006df98f216623e36763f5618b690b8b56913e924d6274912"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/superadmin_dashboard.php",
+            "size": 6809,
+            "hash": "a283010fb6a785f76404c790c194a5424336000e6f41697afd1943bc660d3536"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/superadmin_submissions.php",
+            "size": 2335,
+            "hash": "f954df5697f0ddddbf70881736da4b0364d8a66313622b33a0ef0049d9a45e69"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/superadmin_users.php",
+            "size": 14780,
+            "hash": "12ac4e4d987fa147d76bc18626720c1502723f6b866f8a9788232baba81219d8"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/teacher_assignments.php",
+            "size": 11371,
+            "hash": "fe5499838234f21a51070cb794093d15f338b4a2c773c1250d5818f5610b1152"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/teacher_dashboard.php",
+            "size": 6638,
+            "hash": "7f5419562641fd5b364c89b70536886deef58409259b43c77fcee748b25e66fa"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/teacher_students.php",
+            "size": 19414,
+            "hash": "360902ec2ace172ff89ecdd29b073d09213f3061e00eaa3b3e2b6c4228f87a00"
+        },
+        {
+            "type": "file",
+            "name": "dashboards/teacher_submissions.php",
+            "size": 11409,
+            "hash": "392e974b67bd43822f34f7e9a59cc18a78650187a4f998c0697a22d2b4f095e4"
+        },
+        {
+            "type": "file",
+            "name": "includes/footer.php",
+            "size": 1339,
+            "hash": "a750ca9a0f9b1ba738ba848a2fbc1acaa5e2a13088c7cc074b7bbc3e94cd9ec5"
+        },
+        {
+            "type": "file",
+            "name": "includes/header.php",
+            "size": 14723,
+            "hash": "0d014cbab94070e2eaf0a5c57061fc3f4f2803cd080c5bfb4f793ed46d074a82"
+        },
+        {
+            "type": "file",
+            "name": "uploads/.htaccess",
+            "size": 527,
+            "hash": "3fa0eec1b0c0235b38e28f613373ee57ed9983a733a12d1d6d6450a573563002"
+        },
+        {
+            "type": "folder",
+            "name": "uploads/assignments"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/13_2_zahras_kitchen_1773590037.docx",
+            "size": 742776,
+            "hash": "140fe1d6a087f7928ae2b445bc5d5589817c8908b43daa5309319e72a6e6f212"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/13_5_Claude_AI_1775410281.docx",
+            "size": 33454,
+            "hash": "06b323abb92ac13f2ae011510b618a24a964702fac7644d2e03b998e057cfa86"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/14_2_maihan_s_1773592510.docx",
+            "size": 334510,
+            "hash": "be20791384fa02af2b4d3b2d04c8ee85e3812101412c918dd16f7b8fe6878768"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/14_5_claude_copy_1775483359.docx",
+            "size": 16683,
+            "hash": "f97a7d699137f56d7a85576d92cc276168dd9eed07eafa04c2629658eaa6e959"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/15_2_AffiliateHub_1773593471.pdf",
+            "size": 1785177,
+            "hash": "a6dda99ee214e794937e8a124fef37a3e3098505799bed443b0527b18b648e1f"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/16_2_Orange_White_and_Black_Modern_Simple_Paper_Texture_T-Shirt_Store_Logo_1773574323.pdf",
+            "size": 85221,
+            "hash": "d0fdaab960ff59a9e0915c05ecfacaf8c35e1b9e0ceb585ec80e3edb8395617b"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/16_5_Document_2_1775476090.pdf",
+            "size": 65887,
+            "hash": "176baf6a3ea961c861bd596b8cf13abdc30a99fc1629bb0e1dfc0ca79756fca0"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/17_2_assignment_images_1773662169.pdf",
+            "size": 8176199,
+            "hash": "9807d7047b2e9ce31b593cf5a6d9c50e811698c1ea1b3b2324afac5dad3cd967"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/18_2_Purple_Creative_Watch_Facebook_Post_20260316_144633_0000_1773659662.pdf",
+            "size": 3446742,
+            "hash": "754da8f6f028b4e8f0eb3f84f6eeeb5d8ca49227128726ffab4828b49ad86e35"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/19_2_idrees_1773660730.pdf",
+            "size": 1699571,
+            "hash": "4ff589a826a2552b2a8924b04ab7a1774eb1db17c5fa1facc8261a508c862cd5"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/20_2_Orange_and_Green_Modern_Grocery_Store_Catalog_Booklet_compressed_1773603314.pdf",
+            "size": 538507,
+            "hash": "230ed54d5d0358c368256390510744c882a6a0be36385b97ec368cf03033c77c"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/21_2_Document_7_1__1773652140.pdf",
+            "size": 400388,
+            "hash": "0b1e6e4b29751cb0bb9dceac9d2fe045898744c3c0685f64184105ab52bec592"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/22_2_bakrey_booklet_1773545348.pdf",
+            "size": 738988,
+            "hash": "893d1c4f47a668054ae9d5544ba177da7e70ff5be14999635a7a585d39b7e272"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/25_3_Poster_1775229583.jpg",
+            "size": 430727,
+            "hash": "c49037dcf2e2b055211e36afda93a09cd09d797c69412d5eb04f3b5a8d08bfd4"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/24_4_Empowering_future_innovators_and_leaders_1775286549.png",
+            "size": 2088463,
+            "hash": "41a81a72a2c698518c715605fce89799e2149d76df5ab7658aa281a742ce6109"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/25_4_AI_Future_Leader_s_Academy_4_1775325768.png",
+            "size": 1893766,
+            "hash": "4c5258d2656095b13e9a32c75ce0dd8895c25ed5f8e887271b012e4c9393e9d9"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/26_4_file_0000000007d471fabb505410f1f9ac8a_1775322801.png",
+            "size": 1385989,
+            "hash": "536f2022f44e1239304b35bcc511e0a280fe2fe320a96c47096925c8861699ff"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/27_4_IMG-20260405-WA0003_1775411037.jpg",
+            "size": 169533,
+            "hash": "b410e1d2846405e09453f13c526f6cdf8268e6ff9da4a79f2a8e205c8e5f95e7"
+        },
+        {
+            "type": "file",
+            "name": "uploads/assignments/29_4_FCCDF8B1-B0D9-46B1-B6B8-C9EF82ABCCF9_1775341289.png",
+            "size": 1787537,
+            "hash": "b8976c9259f947c60235a087ce75ffe89136b26229c64b334991635b1437f49c"
+        }
+    ]
+}

@@ -494,6 +494,7 @@ function getNavLinks(string $role, string $activePage): array {
         ];
         $links['System'] = [
             ['key' => 'activity', 'label' => 'Activity Log', 'icon' => 'clock-history', 'url' => $base . 'superadmin_activity.php'],
+            ['key' => 'blog',     'label' => 'Blog Manager',  'icon' => 'file-richtext', 'url' => $base . 'superadmin_blog.php'],
         ];
     }
 

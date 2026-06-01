@@ -14,4 +14,4 @@ Options -Indexes
 # Prevent hotlinking (optional, adjust domain)
 # RewriteEngine On
 # RewriteCond %{HTTP_REFERER} !^https://yourdomain\.com/ [NC]
-# RewriteRule \.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif|html|pptx)$ - [F,L]
+# RewriteRule \.(pdf|doc|docx|zip|jpg|jpeg|png|webp|xlsx|mp4|gif|html|pptx|ppt)$ - [F,L]
