@@ -33,9 +33,10 @@ renderHeader('All Submissions', 'submissions');
           <td class="small text-muted"><?= e($sub['teacher_name']) ?></td>
           <td>
             <a href="<?= BASE_URL ?>/uploads/assignments/<?= e($sub['file_path']) ?>"
-               class="btn btn-sm btn-outline-info" target="_blank" download>
-              <i class="bi bi-download me-1"></i><?= e($sub['file_name']) ?>
-            </a>
+   class="btn btn-sm btn-outline-info"
+   download="<?= e($sub['file_name']) ?>">
+    <i class="bi bi-download me-1"></i><?= e($sub['file_name']) ?>
+</a>
           </td>
           <td class="small text-muted"><?= date('d M Y', strtotime($sub['submitted_at'])) ?></td>
           <td>
