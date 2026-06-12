@@ -598,7 +598,7 @@ function renderScoresList(scores) {
     const date = s.score_date || '—';
     html += `
       <tr style="border-color:#1e3a5f" id="score-row-${s.id}">
-        <td class="text-white align-middle fw-600">${esc(s.score_name)}</td>
+        <td class="text-black align-middle fw-600">${esc(s.score_name)}</td>
         <td class="align-middle">
           <span class="badge bg-primary">
             ${parseFloat(s.marks_obtained).toFixed(1)}/${parseFloat(s.total_marks).toFixed(0)}
