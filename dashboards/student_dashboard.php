@@ -269,7 +269,7 @@ renderHeader('Student Dashboard', 'dashboard');
           [$egrade, $ecolor] = examGrade($epct);
         ?>
         <tr>
-          <td class="fw-600 small text-white"><?= e($es['exam_name']) ?></td>
+          <td class="fw-600 small text-black"><?= e($es['exam_name']) ?></td>
           <td>
             <span class="badge bg-info text-dark">
               <?= number_format((float)$es['marks_obtained'], 1) ?>/<?= (int)$es['total_marks'] ?>
