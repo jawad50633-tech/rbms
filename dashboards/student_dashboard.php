@@ -38,6 +38,30 @@ $examMarks      = $studentInfo['exam_marks']       ?? null;   // e.g. 78.50
 $reexamMarks    = $studentInfo['reexam_marks']      ?? null;   // e.g. 65.00
 $totalExamMarks = $studentInfo['total_exam_marks']  ?? 100;    // denominator
 
+// Dynamic exam scores (from exam_scores table — teacher-managed entries)
+$dynExamScores = $db->prepare(
+    'SELECT es.exam_name, es.marks_obtained, es.total_marks, es.exam_date,
+            u2.full_name AS teacher_name
+     FROM exam_scores es
+     LEFT JOIN users u2 ON u2.id = es.teacher_id
+     WHERE es.student_user_id = ?
+     ORDER BY es.exam_date DESC, es.created_at DESC'
+);
+$dynExamScores->execute([$user['id']]);
+$dynExamScores = $dynExamScores->fetchAll();
+
+// Test scores
+$testScores = $db->prepare(
+    'SELECT ts.test_name, ts.marks_obtained, ts.total_marks, ts.test_date,
+            u2.full_name AS teacher_name
+     FROM test_scores ts
+     LEFT JOIN users u2 ON u2.id = ts.teacher_id
+     WHERE ts.student_user_id = ?
+     ORDER BY ts.test_date DESC, ts.created_at DESC'
+);
+$testScores->execute([$user['id']]);
+$testScores = $testScores->fetchAll();
+
 // Helper: percentage → label + colour
 function examGrade(float $pct): array {
     if ($pct >= 90) return ['A+', '#4ade80'];
@@ -217,6 +241,145 @@ renderHeader('Student Dashboard', 'dashboard');
   </div>
 </div>
 <!-- ───────────────────────── END EXAM MARKS ───────────────────────── -->
+
+<!-- ───────────────────── DYNAMIC EXAM SCORES TABLE ─────────────────────── -->
+<?php if (!empty($dynExamScores)): ?>
+<div class="content-card mb-4">
+  <div class="card-header-custom">
+    <h6>
+      <i class="bi bi-journal-text me-2 text-info"></i>Exam Score Records
+    </h6>
+    <span class="badge bg-info text-dark"><?= count($dynExamScores) ?></span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Exam</th>
+          <th>Marks</th>
+          <th style="min-width:120px">Progress</th>
+          <th>Grade</th>
+          <th>Date</th>
+          <th>Teacher</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($dynExamScores as $es):
+          $epct = $es['total_marks'] > 0 ? ($es['marks_obtained'] / $es['total_marks'] * 100) : 0;
+          [$egrade, $ecolor] = examGrade($epct);
+        ?>
+        <tr>
+          <td class="fw-600 small text-white"><?= e($es['exam_name']) ?></td>
+          <td>
+            <span class="badge bg-info text-dark">
+              <?= number_format((float)$es['marks_obtained'], 1) ?>/<?= (int)$es['total_marks'] ?>
+            </span>
+          </td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="progress flex-grow-1"
+                   style="height:5px;background:#1e293b;border-radius:99px">
+                <div class="progress-bar"
+                     style="width:<?= min(100, round($epct)) ?>%;
+                            background:<?= $ecolor ?>;border-radius:99px"></div>
+              </div>
+              <span style="font-size:.7rem;color:#94a3b8;min-width:32px">
+                <?= round($epct) ?>%
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="badge rounded-pill px-2"
+                  style="background:<?= $ecolor ?>22;color:<?= $ecolor ?>;
+                         border:1px solid <?= $ecolor ?>55;font-size:.72rem">
+              <?= $egrade ?>
+            </span>
+          </td>
+          <td class="small text-muted">
+            <?= $es['exam_date'] ? formatDate($es['exam_date']) : '—' ?>
+          </td>
+          <td class="small text-muted"><?= e($es['teacher_name'] ?? '—') ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
+<?php endif; ?>
+<!-- ─────────────────────── END DYNAMIC EXAM SCORES ──────────────────────── -->
+
+<!-- ───────────────────────── TEST SCORES TABLE ──────────────────────────── -->
+<div class="content-card mb-4">
+  <div class="card-header-custom">
+    <h6>
+      <i class="bi bi-clipboard-check me-2 text-warning"></i>Test Scores
+    </h6>
+    <span class="badge bg-warning text-dark"><?= count($testScores) ?></span>
+  </div>
+
+  <?php if (!empty($testScores)): ?>
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Marks</th>
+          <th style="min-width:120px">Progress</th>
+          <th>Grade</th>
+          <th>Date</th>
+          <th>Teacher</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($testScores as $ts):
+          $tpct = $ts['total_marks'] > 0 ? ($ts['marks_obtained'] / $ts['total_marks'] * 100) : 0;
+          [$tgrade, $tcolor] = examGrade($tpct);
+        ?>
+        <tr>
+          <td class="fw-600 small text-white"><?= e($ts['test_name']) ?></td>
+          <td>
+            <span class="badge bg-warning text-dark">
+              <?= number_format((float)$ts['marks_obtained'], 1) ?>/<?= (int)$ts['total_marks'] ?>
+            </span>
+          </td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="progress flex-grow-1"
+                   style="height:5px;background:#1e293b;border-radius:99px">
+                <div class="progress-bar"
+                     style="width:<?= min(100, round($tpct)) ?>%;
+                            background:<?= $tcolor ?>;border-radius:99px"></div>
+              </div>
+              <span style="font-size:.7rem;color:#94a3b8;min-width:32px">
+                <?= round($tpct) ?>%
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="badge rounded-pill px-2"
+                  style="background:<?= $tcolor ?>22;color:<?= $tcolor ?>;
+                         border:1px solid <?= $tcolor ?>55;font-size:.72rem">
+              <?= $tgrade ?>
+            </span>
+          </td>
+          <td class="small text-muted">
+            <?= $ts['test_date'] ? formatDate($ts['test_date']) : '—' ?>
+          </td>
+          <td class="small text-muted"><?= e($ts['teacher_name'] ?? '—') ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <?php else: ?>
+  <div class="p-4 text-center" style="color:#64748b">
+    <i class="bi bi-clipboard-x fs-2 d-block mb-2 opacity-50"></i>
+    <div class="small">No test scores have been recorded yet.</div>
+  </div>
+  <?php endif; ?>
+</div>
+<!-- ─────────────────────────── END TEST SCORES ───────────────────────────── -->
 
 <!-- Pending Assignments -->
 <?php if (!empty($pending)): ?>
