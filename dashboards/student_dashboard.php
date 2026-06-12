@@ -336,7 +336,7 @@ renderHeader('Student Dashboard', 'dashboard');
           [$tgrade, $tcolor] = examGrade($tpct);
         ?>
         <tr>
-          <td class="fw-600 small text-white"><?= e($ts['test_name']) ?></td>
+          <td class="fw-600 small text-black"><?= e($ts['test_name']) ?></td>
           <td>
             <span class="badge bg-warning text-dark">
               <?= number_format((float)$ts['marks_obtained'], 1) ?>/<?= (int)$ts['total_marks'] ?>
