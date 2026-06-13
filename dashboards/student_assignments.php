@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // FIX #10 — Store a relative sub-path (e.g. "assignments/abc.pdf")
         // so the record remains valid if the base upload root changes.
         $relPath  = 'assignments' . DIRECTORY_SEPARATOR . $fileName;
-        $absPath  = rtrim(UPLOAD_BASE, '/\\') . DIRECTORY_SEPARATOR . $relPath;
+        $absPath  = rtrim(BASE_PATH . '/uploads', '/\\') . DIRECTORY_SEPARATOR . $relPath;
 
         // FIX #1 — UPLOAD_ASSIGNMENTS must be outside the web root.
         // If it is inside the web root, add an .htaccess in that folder:
