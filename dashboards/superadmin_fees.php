@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/header.php';
 
-requireLogin([ROLE_ADMIN]);
+requireLogin([ROLE_SUPER_ADMIN]);
 
 $db   = getDB();
 $user = currentUser();
@@ -153,6 +153,25 @@ $csrf = csrfToken();
 renderHeader('Fees Manager', 'fees');
 ?>
 
+<!-- ── Summary Stats ── -->
+<div class="row g-3 mb-4">
+  <?php $cards = [
+    ['label' => date('F') . ' Collection', 'value' => 'Rs. ' . number_format($month_collected), 'icon' => 'calendar-check-fill', 'color' => '3b82f6', 'bg' => 'dbeafe'],
+    ['label' => 'Total Collected',          'value' => 'Rs. ' . number_format($stats['total_collected'] ?? 0), 'icon' => 'cash-coin', 'color' => '10b981', 'bg' => 'd1fae5'],
+    ['label' => 'Total Discounts Given',    'value' => 'Rs. ' . number_format($stats['total_discount'] ?? 0),  'icon' => 'tag-fill',  'color' => 'f59e0b', 'bg' => 'fef3c7'],
+    ['label' => 'Total Transactions',       'value' => number_format($stats['total_transactions'] ?? 0),        'icon' => 'receipt',   'color' => '8b5cf6', 'bg' => 'ede9fe'],
+  ]; foreach ($cards as $c): ?>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-icon mb-3" style="background:#<?= $c['bg'] ?>;color:#<?= $c['color'] ?>">
+        <i class="bi bi-<?= $c['icon'] ?>"></i>
+      </div>
+      <div class="stat-value" style="font-size:1.4rem"><?= $c['value'] ?></div>
+      <div class="stat-label mt-1"><?= $c['label'] ?></div>
+    </div>
+  </div>
+  <?php endforeach; ?>
+</div>
 
 <!-- Flash Message -->
 <?php if ($message): ?>
