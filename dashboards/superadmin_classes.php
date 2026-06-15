@@ -1,11 +1,11 @@
 <?php
 // superadmin_classes.php — Super Admin ONLY
-// Manage classes AND assign teachers to classes
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/header.php';
 
-requireLogin(ROLE_SUPER_ADMIN);   // ← Super Admin ONLY
-$db = getDB();
+requireLogin(ROLE_SUPER_ADMIN);
+$db   = getDB();
+$user = currentUser();
 
 // ── POST handlers ──────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,11 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Create / Edit class
     if ($action === 'save_class') {
-        $id         = (int)($_POST['id'] ?? 0);
-        $name       = trim($_POST['name'] ?? '');
-        $section    = trim($_POST['section'] ?? '');
-        $monFee     = (float)($_POST['monthly_fee']   ?? 3000);
-        $admFee     = (float)($_POST['admission_fee'] ?? 800);
+        $id      = (int)($_POST['id']            ?? 0);
+        $name    = trim($_POST['name']           ?? '');
+        $section = trim($_POST['section']        ?? '');
+        $monFee  = (float)($_POST['monthly_fee']   ?? 3000);
+        $admFee  = (float)($_POST['admission_fee'] ?? 800);
         if (!$name) { setFlash('error', 'Class name is required.'); header('Location: superadmin_classes.php'); exit; }
         if ($id) {
             $db->prepare('UPDATE classes SET name=?, section=?, monthly_fee=?, admission_fee=? WHERE id=?')
@@ -40,25 +40,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: superadmin_classes.php'); exit;
     }
 
-    // Assign teacher to class
+    // Assign multiple classes to a teacher (replaces ALL previous assignments)
     if ($action === 'assign_teacher') {
         $teacherId = (int)($_POST['teacher_id'] ?? 0);
-        $classId   = (int)($_POST['class_id']   ?? 0) ?: null;
+        $classIds  = array_map('intval', (array)($_POST['class_ids'] ?? []));
+        $classIds  = array_filter($classIds); // remove 0s
 
         // Verify user is actually a teacher
         $check = $db->prepare('SELECT id FROM users WHERE id=? AND role="teacher"');
         $check->execute([$teacherId]);
-        if ($check->fetch()) {
-            $db->prepare('UPDATE users SET class_id=? WHERE id=? AND role="teacher"')
-               ->execute([$classId, $teacherId]);
-            logActivity(currentUser()['id'],
-                "Assigned teacher #{$teacherId} to class #" . ($classId ?? 'none'),
-                'Classes'
-            );
-            setFlash('success', 'Teacher class assignment updated.');
-        } else {
-            setFlash('error', 'Invalid teacher selected.');
+        if (!$check->fetch()) {
+            setFlash('error', 'Invalid teacher.'); header('Location: superadmin_classes.php'); exit;
         }
+
+        // Remove old assignments then re-insert chosen ones
+        $db->prepare('DELETE FROM teacher_classes WHERE teacher_id=?')->execute([$teacherId]);
+        if ($classIds) {
+            $ins = $db->prepare('INSERT IGNORE INTO teacher_classes (teacher_id, class_id) VALUES (?,?)');
+            foreach ($classIds as $cid) {
+                $ins->execute([$teacherId, $cid]);
+            }
+        }
+
+        logActivity($user['id'],
+            "Updated class assignments for teacher #{$teacherId}: " . implode(',', $classIds ?: ['none']),
+            'Classes'
+        );
+        setFlash('success', 'Teacher class assignments updated.');
         header('Location: superadmin_classes.php'); exit;
     }
 }
@@ -66,24 +74,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ── Data ───────────────────────────────────────────────────
 $classes = $db->query(
     'SELECT c.*,
-            COUNT(DISTINCT s.id) AS student_count,
-            COUNT(DISTINCT u.id) AS teacher_count
+            COUNT(DISTINCT s.id)  AS student_count,
+            COUNT(DISTINCT tc.teacher_id) AS teacher_count
      FROM classes c
-     LEFT JOIN students s ON s.class_id = c.id
-     LEFT JOIN users u    ON u.class_id = c.id AND u.role = "teacher"
+     LEFT JOIN students s        ON s.class_id = c.id
+     LEFT JOIN teacher_classes tc ON tc.class_id = c.id
      GROUP BY c.id
      ORDER BY c.name, c.section'
 )->fetchAll();
 
-// All teachers with their current class assignment
+// All teachers with their currently assigned classes
 $teachers = $db->query(
-    'SELECT u.id, u.full_name, u.email, u.class_id,
-            c.name AS class_name, c.section
+    'SELECT u.id, u.full_name, u.email
      FROM users u
-     LEFT JOIN classes c ON c.id = u.class_id
      WHERE u.role = "teacher" AND u.status = "active"
      ORDER BY u.full_name'
 )->fetchAll();
+
+// Build a map: teacher_id → [class_id, ...]
+$teacherClassMap = [];
+$tcRows = $db->query('SELECT teacher_id, class_id FROM teacher_classes')->fetchAll();
+foreach ($tcRows as $row) {
+    $teacherClassMap[$row['teacher_id']][] = $row['class_id'];
+}
+
+// Class labels for display
+$classLabels = [];
+foreach ($classes as $c) {
+    $classLabels[$c['id']] = $c['name'] . ($c['section'] ? ' (' . $c['section'] . ')' : '');
+}
 
 $editClass = null;
 if (isset($_GET['edit_class'])) {
@@ -100,7 +119,6 @@ renderHeader('Classes & Teacher Assignment', 'classes');
 
   <!-- ══ LEFT: Classes ══ -->
   <div class="col-lg-7">
-
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="mb-0 fw-700">Classes</h5>
       <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#classModal"
@@ -113,10 +131,7 @@ renderHeader('Classes & Teacher Assignment', 'classes');
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
-            <tr>
-              <th>#</th><th>Class</th><th>Fees</th>
-              <th>Students</th><th>Teacher(s)</th><th>Actions</th>
-            </tr>
+            <tr><th>#</th><th>Class</th><th>Fees</th><th>Students</th><th>Teachers</th><th>Actions</th></tr>
           </thead>
           <tbody>
             <?php foreach ($classes as $i => $c): ?>
@@ -132,12 +147,8 @@ renderHeader('Classes & Teacher Assignment', 'classes');
                 Adm: <strong>Rs.<?= number_format($c['admission_fee']) ?></strong><br>
                 Mon: <strong>Rs.<?= number_format($c['monthly_fee']) ?></strong>
               </td>
-              <td>
-                <span class="badge bg-primary rounded-pill"><?= (int)$c['student_count'] ?></span>
-              </td>
-              <td>
-                <span class="badge bg-success rounded-pill"><?= (int)$c['teacher_count'] ?></span>
-              </td>
+              <td><span class="badge bg-primary rounded-pill"><?= (int)$c['student_count'] ?></span></td>
+              <td><span class="badge bg-success rounded-pill"><?= (int)$c['teacher_count'] ?></span></td>
               <td>
                 <button class="btn btn-sm btn-outline-primary me-1"
                         data-bs-toggle="modal" data-bs-target="#classModal"
@@ -167,67 +178,75 @@ renderHeader('Classes & Teacher Assignment', 'classes');
 
   <!-- ══ RIGHT: Teacher Assignment ══ -->
   <div class="col-lg-5">
-
     <div class="mb-3">
       <h5 class="mb-0 fw-700">Teacher → Class Assignment</h5>
-      <small class="text-muted">Only Super Admin can assign teachers to classes.</small>
+      <small class="text-muted">Each teacher can be assigned to multiple classes.</small>
     </div>
 
+    <?php if (empty($teachers)): ?>
     <div class="content-card">
-      <?php if (empty($teachers)): ?>
       <div class="card-body-custom text-center text-muted py-4">
         No teachers found. <a href="superadmin_users.php">Create a teacher account</a>.
       </div>
-      <?php else: ?>
-      <div class="table-responsive">
-        <table class="table table-custom">
-          <thead>
-            <tr><th>Teacher</th><th>Assigned Class</th><th>Change</th></tr>
-          </thead>
-          <tbody>
-            <?php foreach ($teachers as $t): ?>
-            <tr>
-              <td>
-                <div class="fw-600 small"><?= e($t['full_name']) ?></div>
-                <div class="text-muted" style="font-size:.72rem"><?= e($t['email']) ?></div>
-              </td>
-              <td>
-                <?php if ($t['class_name']): ?>
-                <span class="badge bg-success">
-                  <?= e($t['class_name']) ?><?= $t['section'] ? ' (' . e($t['section']) . ')' : '' ?>
-                </span>
-                <?php else: ?>
-                <span class="badge bg-warning text-dark">Unassigned</span>
-                <?php endif; ?>
-              </td>
-              <td>
-                <form method="POST" class="d-flex gap-1 align-items-center">
-                  <input type="hidden" name="csrf_token"  value="<?= $csrf ?>">
-                  <input type="hidden" name="action"      value="assign_teacher">
-                  <input type="hidden" name="teacher_id"  value="<?= $t['id'] ?>">
-                  <select name="class_id" class="form-select form-select-sm" style="min-width:130px">
-                    <option value="">— None —</option>
-                    <?php foreach ($classes as $cl): ?>
-                    <option value="<?= $cl['id'] ?>"
-                      <?= $t['class_id'] == $cl['id'] ? 'selected' : '' ?>>
-                      <?= e($cl['name']) ?><?= $cl['section'] ? ' (' . e($cl['section']) . ')' : '' ?>
-                    </option>
-                    <?php endforeach; ?>
-                  </select>
-                  <button type="submit" class="btn btn-sm btn-primary" title="Save">
-                    <i class="bi bi-check2"></i>
-                  </button>
-                </form>
-              </td>
-            </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-      <?php endif; ?>
     </div>
+    <?php else: ?>
+    <?php foreach ($teachers as $t):
+      $assigned = $teacherClassMap[$t['id']] ?? [];
+    ?>
+    <div class="content-card mb-3">
+      <div class="card-header-custom py-2">
+        <div>
+          <div class="fw-600 small"><?= e($t['full_name']) ?></div>
+          <div class="text-muted" style="font-size:.72rem"><?= e($t['email']) ?></div>
+        </div>
+        <!-- Current classes badge row -->
+        <div class="d-flex flex-wrap gap-1">
+          <?php if ($assigned): ?>
+            <?php foreach ($assigned as $cid): ?>
+            <span class="badge bg-success"><?= e($classLabels[$cid] ?? '#'.$cid) ?></span>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <span class="badge bg-warning text-dark">Unassigned</span>
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="card-body-custom py-3">
+        <form method="POST">
+          <input type="hidden" name="csrf_token"  value="<?= $csrf ?>">
+          <input type="hidden" name="action"      value="assign_teacher">
+          <input type="hidden" name="teacher_id"  value="<?= $t['id'] ?>">
 
+          <label class="form-label small text-muted mb-2">
+            <i class="bi bi-check2-square me-1"></i>Select one or more classes:
+          </label>
+          <div class="row g-2 mb-3">
+            <?php foreach ($classes as $cl): ?>
+            <div class="col-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       name="class_ids[]"
+                       value="<?= $cl['id'] ?>"
+                       id="tc_<?= $t['id'] ?>_<?= $cl['id'] ?>"
+                       <?= in_array($cl['id'], $assigned) ? 'checked' : '' ?>>
+                <label class="form-check-label small"
+                       for="tc_<?= $t['id'] ?>_<?= $cl['id'] ?>">
+                  <?= e($cl['name']) ?><?= $cl['section'] ? ' <span class="text-muted">(' . e($cl['section']) . ')</span>' : '' ?>
+                </label>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+
+          <button type="submit" class="btn btn-sm btn-primary">
+            <i class="bi bi-floppy me-1"></i>Save Assignments
+          </button>
+        </form>
+      </div>
+    </div>
+    <?php endforeach; ?>
+    <?php endif; ?>
   </div>
+
 </div>
 
 <!-- Class Modal -->
@@ -243,7 +262,6 @@ renderHeader('Classes & Teacher Assignment', 'classes');
           <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
           <input type="hidden" name="action"     value="save_class">
           <input type="hidden" name="id"         id="clsId" value="">
-
           <div class="row g-3">
             <div class="col-md-8">
               <label class="form-label">Class Name *</label>
@@ -278,20 +296,20 @@ renderHeader('Classes & Teacher Assignment', 'classes');
 
 <script>
 function setCreate() {
-  document.getElementById('clsTitle').textContent    = 'Add Class';
-  document.getElementById('clsId').value             = '';
-  document.getElementById('clsName').value           = '';
-  document.getElementById('clsSection').value        = '';
-  document.getElementById('clsAdmFee').value         = '800';
-  document.getElementById('clsMonFee').value         = '3000';
+  document.getElementById('clsTitle').textContent = 'Add Class';
+  document.getElementById('clsId').value          = '';
+  document.getElementById('clsName').value        = '';
+  document.getElementById('clsSection').value     = '';
+  document.getElementById('clsAdmFee').value      = '800';
+  document.getElementById('clsMonFee').value      = '3000';
 }
 function editCls(c) {
-  document.getElementById('clsTitle').textContent    = 'Edit Class';
-  document.getElementById('clsId').value             = c.id;
-  document.getElementById('clsName').value           = c.name;
-  document.getElementById('clsSection').value        = c.section || '';
-  document.getElementById('clsAdmFee').value         = c.admission_fee || 800;
-  document.getElementById('clsMonFee').value         = c.monthly_fee   || 3000;
+  document.getElementById('clsTitle').textContent = 'Edit Class';
+  document.getElementById('clsId').value          = c.id;
+  document.getElementById('clsName').value        = c.name;
+  document.getElementById('clsSection').value     = c.section || '';
+  document.getElementById('clsAdmFee').value      = c.admission_fee || 800;
+  document.getElementById('clsMonFee').value      = c.monthly_fee   || 3000;
 }
 <?php if ($editClass): ?>
 window.addEventListener('load', function () {

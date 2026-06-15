@@ -6,11 +6,17 @@ requireLogin(ROLE_TEACHER);
 $db   = getDB();
 $user = currentUser();
 
-// Get teacher's assigned class
-$teacherRow = $db->prepare('SELECT u.class_id, c.name AS class_name, c.section FROM users u LEFT JOIN classes c ON c.id=u.class_id WHERE u.id=?');
-$teacherRow->execute([$user['id']]);
-$teacherRow = $teacherRow->fetch();
-$myClassId  = $teacherRow['class_id'] ?? null;
+// ── Get all classes assigned to this teacher ─────────────
+$myClassRows = $db->prepare(
+    'SELECT c.id, c.name, c.section
+     FROM teacher_classes tc
+     JOIN classes c ON c.id = tc.class_id
+     WHERE tc.teacher_id = ?
+     ORDER BY c.name, c.section'
+);
+$myClassRows->execute([$user['id']]);
+$myClassRows = $myClassRows->fetchAll();
+$myClassIds  = array_column($myClassRows, 'id');
 
 $errors   = [];
 $editItem = null;
@@ -22,21 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'save') {
-        $id     = (int)($_POST['id']          ?? 0);
-        $title  = trim($_POST['title']        ?? '');
-        $desc   = trim($_POST['description']  ?? '');
-        $due    = $_POST['due_date']          ?? '';
-        $marks  = (int)($_POST['total_marks'] ?? 100);
-        $status = $_POST['status']            ?? 'active';
-        // Always use teacher's own assigned class — cannot be overridden
-        $classId = $myClassId;
+        $id      = (int)($_POST['id']           ?? 0);
+        $title   = trim($_POST['title']         ?? '');
+        $desc    = trim($_POST['description']   ?? '');
+        $due     = $_POST['due_date']           ?? '';
+        $marks   = (int)($_POST['total_marks']  ?? 100);
+        $status  = $_POST['status']             ?? 'active';
+        $classId = (int)($_POST['class_id']     ?? 0) ?: null;
 
         if (!$title)   $errors[] = 'Title is required.';
-        if (!$classId) $errors[] = 'You must be assigned to a class before creating assignments. Contact Super Admin.';
+        if (!$classId) $errors[] = 'Please select a class for this assignment.';
+
+        // Ensure teacher actually teaches this class
+        if ($classId && !in_array($classId, $myClassIds)) {
+            $errors[] = 'You are not assigned to that class.';
+        }
 
         if (empty($errors)) {
             if ($id) {
-                // Verify ownership
                 $own = $db->prepare('SELECT id FROM assignments WHERE id=? AND teacher_id=?');
                 $own->execute([$id, $user['id']]);
                 if (!$own->fetch()) { http_response_code(403); die('Forbidden'); }
@@ -51,8 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 logActivity($user['id'], "Created assignment: {$title}", 'Assignments');
                 setFlash('success', 'Assignment created.');
             }
-            header('Location: teacher_assignments.php');
-            exit;
+            header('Location: teacher_assignments.php'); exit;
         }
     }
 
@@ -65,8 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             logActivity($user['id'], "Deleted assignment #{$id}", 'Assignments');
             setFlash('success', 'Assignment deleted.');
         }
-        header('Location: teacher_assignments.php');
-        exit;
+        header('Location: teacher_assignments.php'); exit;
     }
 }
 
@@ -81,9 +88,10 @@ if (isset($_GET['edit'])) {
 
 // ── List ──────────────────────────────────────────────────
 $assignments = $db->prepare(
-    'SELECT a.*,
+    'SELECT a.*, c.name AS class_name, c.section,
             (SELECT COUNT(*) FROM submissions WHERE assignment_id=a.id) AS submission_count
      FROM assignments a
+     LEFT JOIN classes c ON c.id = a.class_id
      WHERE a.teacher_id = ?
      ORDER BY a.created_at DESC'
 );
@@ -94,15 +102,8 @@ $csrf = csrfToken();
 renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') : 'My Assignments', 'assignments');
 ?>
 
-<?php if (!$myClassId && $showForm): ?>
-<div class="alert alert-warning">
-  <i class="bi bi-exclamation-triangle-fill me-2"></i>
-  You are not assigned to any class. <strong>Contact the Super Admin</strong> to assign you a class before creating assignments.
-</div>
-<?php endif; ?>
-
 <?php if ($showForm): ?>
-<!-- FORM -->
+<!-- ── FORM ─────────────────────────────────────────────── -->
 <div class="d-flex align-items-center gap-3 mb-4">
   <a href="teacher_assignments.php" class="btn btn-outline-secondary btn-sm">
     <i class="bi bi-arrow-left me-1"></i>Back
@@ -110,9 +111,18 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
   <h5 class="mb-0 fw-700"><?= $editItem ? 'Edit Assignment' : 'Create Assignment' ?></h5>
 </div>
 
+<?php if (empty($myClassIds)): ?>
+<div class="alert alert-warning">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+  You are not assigned to any class. Contact the Super Admin.
+</div>
+<?php endif; ?>
+
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger">
-  <?php foreach ($errors as $e): ?><div><i class="bi bi-exclamation-circle me-1"></i><?= e($e) ?></div><?php endforeach; ?>
+  <?php foreach ($errors as $err): ?>
+  <div><i class="bi bi-exclamation-circle me-1"></i><?= e($err) ?></div>
+  <?php endforeach; ?>
 </div>
 <?php endif; ?>
 
@@ -121,12 +131,6 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
     <div class="content-card">
       <div class="card-header-custom">
         <h6>Assignment Details</h6>
-        <?php if ($myClassId): ?>
-        <span class="badge bg-primary">
-          <i class="bi bi-diagram-3 me-1"></i>
-          <?= e($teacherRow['class_name']) ?><?= $teacherRow['section'] ? ' (' . e($teacherRow['section']) . ')' : '' ?>
-        </span>
-        <?php endif; ?>
       </div>
       <div class="card-body-custom">
         <form method="POST">
@@ -139,16 +143,25 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
             <input type="text" class="form-control" name="title"
                    value="<?= e($editItem['title'] ?? '') ?>" required>
           </div>
+
           <div class="mb-3">
             <label class="form-label">Description / Instructions</label>
             <textarea class="form-control" name="description" rows="5"><?= e($editItem['description'] ?? '') ?></textarea>
           </div>
 
-          <!-- Class is auto-set to teacher's class — shown as read-only info -->
-          <div class="alert alert-info py-2 small mb-3">
-            <i class="bi bi-info-circle me-1"></i>
-            This assignment will be posted to your class:
-            <strong><?= $myClassId ? e($teacherRow['class_name']) . ($teacherRow['section'] ? ' (' . e($teacherRow['section']) . ')' : '') : 'Not assigned' ?></strong>
+          <!-- Class selector — teacher picks from their assigned classes -->
+          <div class="mb-3">
+            <label class="form-label">Assign to Class *</label>
+            <select class="form-select" name="class_id" required>
+              <option value="">— Select a class —</option>
+              <?php foreach ($myClassRows as $cl): ?>
+              <option value="<?= $cl['id'] ?>"
+                <?= ($editItem['class_id'] ?? 0) == $cl['id'] ? 'selected' : '' ?>>
+                <?= e($cl['name']) ?><?= $cl['section'] ? ' (' . e($cl['section']) . ')' : '' ?>
+              </option>
+              <?php endforeach; ?>
+            </select>
+            <div class="form-text">Only classes you are assigned to are shown.</div>
           </div>
 
           <div class="row g-3">
@@ -172,7 +185,7 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
           </div>
 
           <div class="mt-4 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" <?= !$myClassId ? 'disabled' : '' ?>>
+            <button type="submit" class="btn btn-primary" <?= empty($myClassIds) ? 'disabled' : '' ?>>
               <i class="bi bi-check2 me-1"></i><?= $editItem ? 'Update' : 'Create Assignment' ?>
             </button>
             <a href="teacher_assignments.php" class="btn btn-outline-secondary">Cancel</a>
@@ -184,26 +197,19 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
 </div>
 
 <?php else: ?>
-<!-- LIST -->
+<!-- ── LIST ─────────────────────────────────────────────── -->
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <div>
-    <h5 class="mb-0 fw-700">My Assignments <span class="badge bg-primary ms-1"><?= count($assignments) ?></span></h5>
-    <?php if ($myClassId): ?>
-    <small class="text-muted">
-      <i class="bi bi-diagram-3 me-1"></i>
-      Class: <strong><?= e($teacherRow['class_name']) ?><?= $teacherRow['section'] ? ' (' . e($teacherRow['section']) . ')' : '' ?></strong>
-    </small>
-    <?php endif; ?>
-  </div>
-  <a href="teacher_assignments.php?action=add" class="btn btn-primary" <?= !$myClassId ? 'title="Assign a class first" style="opacity:.5;pointer-events:none"' : '' ?>>
+  <h5 class="mb-0 fw-700">My Assignments <span class="badge bg-primary ms-1"><?= count($assignments) ?></span></h5>
+  <a href="teacher_assignments.php?action=add" class="btn btn-primary"
+     <?= empty($myClassIds) ? 'style="opacity:.5;pointer-events:none" title="No class assigned"' : '' ?>>
     <i class="bi bi-plus-circle-fill me-1"></i>Create Assignment
   </a>
 </div>
 
-<?php if (!$myClassId): ?>
+<?php if (empty($myClassIds)): ?>
 <div class="alert alert-warning">
   <i class="bi bi-exclamation-triangle-fill me-2"></i>
-  You are not assigned to any class. Contact Super Admin to get a class assigned.
+  You are not assigned to any class. Contact the Super Admin to get classes assigned.
 </div>
 <?php endif; ?>
 
@@ -211,12 +217,19 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
   <div class="table-responsive">
     <table class="table table-custom">
       <thead>
-        <tr><th>Title</th><th>Due Date</th><th>Marks</th><th>Submissions</th><th>Status</th><th>Actions</th></tr>
+        <tr><th>Title</th><th>Class</th><th>Due Date</th><th>Marks</th><th>Submissions</th><th>Status</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <?php foreach ($assignments as $a): ?>
         <tr>
           <td class="fw-600 small"><?= e($a['title']) ?></td>
+          <td class="small">
+            <?php if ($a['class_name']): ?>
+            <span class="badge bg-info text-dark">
+              <?= e($a['class_name']) ?><?= $a['section'] ? ' (' . e($a['section']) . ')' : '' ?>
+            </span>
+            <?php else: ?><span class="text-muted">—</span><?php endif; ?>
+          </td>
           <td class="small <?= ($a['due_date'] && strtotime($a['due_date']) < time()) ? 'text-danger' : '' ?>">
             <?= $a['due_date'] ? formatDate($a['due_date']) : '—' ?>
           </td>
@@ -249,11 +262,7 @@ renderHeader($showForm ? ($editItem ? 'Edit Assignment' : 'Create Assignment') :
         </tr>
         <?php endforeach; ?>
         <?php if (empty($assignments)): ?>
-        <tr>
-          <td colspan="6" class="text-center text-muted py-4">
-            No assignments yet. <a href="?action=add">Create one</a>.
-          </td>
-        </tr>
+        <tr><td colspan="7" class="text-center text-muted py-4">No assignments yet. <a href="?action=add">Create one</a>.</td></tr>
         <?php endif; ?>
       </tbody>
     </table>
