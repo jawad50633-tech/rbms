@@ -489,7 +489,7 @@ function getNavLinks(string $role, string $activePage): array {
             ['key' => 'students',      'label' => 'Students (Admissions)', 'icon' => 'person-badge-fill', 'url' => $base . 'admin_students.php'],
             ['key' => 'assignments',   'label' => 'Assignments',           'icon' => 'journal-text',      'url' => $base . 'teacher_assignments.php'],
             ['key' => 'submissions',   'label' => 'All Submissions',       'icon' => 'cloud-upload-fill', 'url' => $base . 'superadmin_submissions.php'],
-            ['key' => 'fees',          'label' => 'Fees Manager',          'icon' => 'cash-coin',         'url' => $base . 'admin_fees.php'],
+            ['key' => 'fees',          'label' => 'Fees Manager',          'icon' => 'cash-coin',         'url' => $base . 'superadmin_fees.php'],
             ['key' => 'fees_audit',    'label' => 'Fees Audit',            'icon' => 'shield-lock-fill',  'url' => $base . 'admin_fees_audit.php'],
         ];
         $links['System'] = [
