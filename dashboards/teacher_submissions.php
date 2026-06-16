@@ -7,7 +7,14 @@ $db   = getDB();
 $user = currentUser();
 
 // Get teacher's assigned class — enforced server-side
-$teacherRow = $db->prepare('SELECT u.class_id, c.name AS class_name, c.section FROM users u LEFT JOIN classes c ON c.id=u.class_id WHERE u.id=?');
+$teacherRow = $db->prepare(
+    'SELECT c.id AS class_id, c.name AS class_name, c.section
+     FROM teacher_classes tc
+     JOIN classes c ON c.id = tc.class_id
+     WHERE tc.teacher_id = ?
+     LIMIT 1'
+);
+
 $teacherRow->execute([$user['id']]);
 $teacherRow = $teacherRow->fetch();
 $myClassId  = $teacherRow['class_id'] ?? null;
