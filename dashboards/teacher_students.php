@@ -552,7 +552,7 @@ function submitAddScore() {
       if (res.success) {
         const cid = scoreState.type==='exam'?`exam-count-${scoreState.uid}`:`test-count-${scoreState.uid}`;
         const cel = document.getElementById(cid);
-        if (cel) cel.textContent = parseInt(cel.textContent||0)+1;
+        if (cel) cel.textContent = (parseInt(cel.textContent || '0', 10) || 0) + 1;
         ['newScoreName','newMarksObtained','newScoreDate'].forEach(id=>document.getElementById(id).value='');
         loadScores(); showGlobalAlert('success', res.message);
       } else { document.getElementById('scoreNameError').textContent=res.message; }
