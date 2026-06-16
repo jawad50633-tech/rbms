@@ -165,7 +165,7 @@ $students = $db->prepare(
             (SELECT COUNT(*) FROM test_scores ts
              WHERE ts.student_user_id = u.id AND ts.teacher_id = ?) AS test_score_count
      FROM users u
-     JOIN students s ON s.user_id = u.id
+     JOIN students s ON s.user_id = es.student_user_id
      $where
      ORDER BY u.full_name ASC"
 );
