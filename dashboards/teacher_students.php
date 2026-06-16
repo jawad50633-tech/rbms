@@ -440,7 +440,7 @@ function gradeInfo(pct) {
   if (pct >= 70) return { label:'B',  color:'#60a5fa' };
   if (pct >= 60) return { label:'C',  color:'#fbbf24' };
   if (pct >= 50) return { label:'D',  color:'#fb923c' };
-  return               { label:'F',  color:'#f87171' };
+  return               { label:'F',  color:'#f00' };
 }
 
 function showGlobalAlert(type, msg) {
