@@ -448,6 +448,7 @@ renderHeader('Blog Management', 'blog');
                  placeholder="e.g. Dr. Sara Khan, AIFLA Team, Anonymous…"
                  value="<?= e($editPost['custom_author_name'] ?? '') ?>">
           <div class="form-text">
+            <pre><?php print_r($user); ?></pre>
             Leave blank to use account name: <strong><?= e($user['full_name']) ?></strong>
           </div>
         </div>
