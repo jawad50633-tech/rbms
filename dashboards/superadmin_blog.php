@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/rbms/config.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/header.php';
 
 $db = getDB();
 
