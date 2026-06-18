@@ -445,7 +445,7 @@ renderHeader('Blog Management', 'blog');
             <span class="text-muted fw-400" style="font-size:.78rem">— overrides account name</span>
           </label>
           <input type="text" name="custom_author_name" class="form-control"
-                 placeholder="e.g. Dr. Sara Khan, AIFLA Team, Anonymous…"
+                 placeholder="e.g. Student-name, Guest Author…"
                  value="<?= e($editPost['custom_author_name'] ?? '') ?>">
           <div class="form-text">
             Leave blank to use account name: <strong><?= e($user['name']) ?></strong>
