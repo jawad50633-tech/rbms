@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_fee'])) {
             // Discount
             $discount_key     = ($fee_type === 'Admission') ? 'discount_option_adm' : 'discount_option_mon';
             $discount_percent = (int)($_POST[$discount_key] ?? 0);
-            $allowed_discounts = ($fee_type === 'Admission') ? [0, 100] : [0, 20, 100];
+            $allowed_discounts = ($fee_type === 'Admission') ? [0, 100] : [0, 20, 50, 100];
             if (!in_array($discount_percent, $allowed_discounts)) $discount_percent = 0;
 
             $discount      = ($base_amount * $discount_percent) / 100;
@@ -319,6 +319,8 @@ renderHeader('Fees Manager', 'fees');
               <label class="form-label small fw-600">Discount</label>
               <select name="discount_option_adm" class="form-select form-select-sm mb-2">
                 <option value="0">No Discount</option>
+                <option value="20">20% Discount</option>
+                <option value="50">50% Discount</option>
                 <option value="100">Full Scholarship (100%)</option>
               </select>
 
@@ -345,6 +347,7 @@ renderHeader('Fees Manager', 'fees');
               <select name="discount_option_mon" class="form-select form-select-sm mb-2">
                 <option value="0">No Discount</option>
                 <option value="20">20% Discount</option>
+                <option value="50">50% Discount</option>
                 <option value="100">Full Scholarship (100%)</option>
               </select>
 
