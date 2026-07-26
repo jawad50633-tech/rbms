@@ -50,7 +50,7 @@ renderHeader('Super Admin Dashboard', 'dashboard');
     ['label' => 'Students',      'value' => $stats['total_students'], 'icon' => 'person-badge-fill', 'color' => 'f59e0b', 'bg' => 'fef3c7', 'hide' => true]
   ];
   foreach ($cards as $c): ?>
-  <div class="col-6 col-md-4 col-xl-2" <?= !empty($c['hide']) ? 'data-students' : '' ?>>
+  <div class="col-6 col-md-4 col-xl-4" <?= !empty($c['hide']) ? 'data-students' : '' ?>>
     <div class="stat-card h-100">
       <div class="stat-icon mb-3" style="background:#<?= $c['bg'] ?>; color:#<?= $c['color'] ?>">
         <i class="bi bi-<?= $c['icon'] ?>"></i>
