@@ -45,8 +45,8 @@ renderHeader('Super Admin Dashboard', 'dashboard');
 <div class="row g-3 mb-4">
   <?php
   $cards = [
-    ['label' => 'Admins',        'value' => $stats['total_admins'],   'icon' => 'people-fill',  'color' => '8b5cf6', 'bg' => 'ede9fe'],
-    ['label' => 'Teachers',      'value' => $stats['total_teachers'], 'icon' => 'person-workspace',  'color' => '10b981', 'bg' => 'd1fae5'],
+    ['label' => 'Admins',        'value' => $stats['total_admins'],   'icon' => 'people-fill',  'color' => 'ff0000', 'bg' => 'ede9fe'],
+    ['label' => 'Teachers',      'value' => $stats['total_teachers'], 'icon' => 'person-workspace',  'color' => '0000ff', 'bg' => 'd1fae5'],
     ['label' => 'Students',      'value' => $stats['total_students'], 'icon' => 'person-badge-fill', 'color' => 'f59e0b', 'bg' => 'fef3c7', 'hide' => true]
   ];
   foreach ($cards as $c): ?>
