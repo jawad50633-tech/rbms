@@ -47,9 +47,7 @@ renderHeader('Super Admin Dashboard', 'dashboard');
   $cards = [
     ['label' => 'Admins',        'value' => $stats['total_admins'],   'icon' => 'people-fill',  'color' => '8b5cf6', 'bg' => 'ede9fe'],
     ['label' => 'Teachers',      'value' => $stats['total_teachers'], 'icon' => 'person-workspace',  'color' => '10b981', 'bg' => 'd1fae5'],
-    ['label' => 'Students',      'value' => $stats['total_students'], 'icon' => 'person-badge-fill', 'color' => 'f59e0b', 'bg' => 'fef3c7', 'hide' => true],
-    ['label' => 'Assignments',   'value' => $totalAssignments,        'icon' => 'journal-text',      'color' => 'ef4444', 'bg' => 'fee2e2'],
-    ['label' => 'Submissions',   'value' => $totalSubmissions,        'icon' => 'cloud-upload-fill', 'color' => '06b6d4', 'bg' => 'cffafe'],
+    ['label' => 'Students',      'value' => $stats['total_students'], 'icon' => 'person-badge-fill', 'color' => 'f59e0b', 'bg' => 'fef3c7', 'hide' => true]
   ];
   foreach ($cards as $c): ?>
   <div class="col-6 col-md-4 col-xl-2" <?= !empty($c['hide']) ? 'data-students' : '' ?>>
