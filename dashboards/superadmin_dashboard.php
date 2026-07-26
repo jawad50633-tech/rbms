@@ -45,8 +45,7 @@ renderHeader('Super Admin Dashboard', 'dashboard');
 <div class="row g-3 mb-4">
   <?php
   $cards = [
-    ['label' => 'Total Users',   'value' => $stats['total_users'],    'icon' => 'people-fill',       'color' => '3b82f6', 'bg' => 'dbeafe'],
-    ['label' => 'Admins',        'value' => $stats['total_admins'],   'icon' => 'person-gear-fill',  'color' => '8b5cf6', 'bg' => 'ede9fe'],
+    ['label' => 'Admins',        'value' => $stats['total_admins'],   'icon' => 'people-fill',  'color' => '8b5cf6', 'bg' => 'ede9fe'],
     ['label' => 'Teachers',      'value' => $stats['total_teachers'], 'icon' => 'person-workspace',  'color' => '10b981', 'bg' => 'd1fae5'],
     ['label' => 'Students',      'value' => $stats['total_students'], 'icon' => 'person-badge-fill', 'color' => 'f59e0b', 'bg' => 'fef3c7', 'hide' => true],
     ['label' => 'Assignments',   'value' => $totalAssignments,        'icon' => 'journal-text',      'color' => 'ef4444', 'bg' => 'fee2e2'],
