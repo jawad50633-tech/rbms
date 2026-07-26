@@ -114,12 +114,13 @@ $csrfToken = csrfToken();
     }
 
     .login-card {
-      background: #fff;
+      background: #10151f;
+      border: 1px solid #232b3a;
       border-radius: 20px;
       padding: 48px 44px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 25px 60px rgba(0,0,0,.35);
+      box-shadow: 0 25px 60px rgba(0,0,0,.55);
     }
 
     .login-logo {
@@ -138,14 +139,14 @@ $csrfToken = csrfToken();
     .login-title {
       font-size: 1.4rem;
       font-weight: 700;
-      color: #0f172a;
+      color: #e7ebf3;
       text-align: center;
       margin-bottom: 4px;
     }
 
     .login-subtitle {
       text-align: center;
-      color: #64748b;
+      color: #94a3b8;
       font-size: .85rem;
       margin-bottom: 32px;
     }
@@ -153,27 +154,33 @@ $csrfToken = csrfToken();
     .form-label {
       font-weight: 600;
       font-size: .84rem;
-      color: #374151;
+      color: #a3adc2;
     }
 
     .form-control {
       border-radius: 10px;
       padding: 11px 14px;
-      border: 1.5px solid #e2e8f0;
+      border: 1.5px solid #232b3a;
+      background: #161c29;
+      color: #e7ebf3;
       font-size: .9rem;
       transition: border-color .2s, box-shadow .2s;
     }
 
+    .form-control::placeholder { color: #5f6b82; }
+
     .form-control:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+      background: #161c29;
+      color: #e7ebf3;
     }
 
     .input-group-text {
-      background: #f8fafc;
-      border: 1.5px solid #e2e8f0;
+      background: #161c29;
+      border: 1.5px solid #232b3a;
       border-radius: 10px 0 0 10px;
-      color: #64748b;
+      color: #94a3b8;
     }
 
     .input-group .form-control { border-radius: 0 10px 10px 0; }
@@ -198,18 +205,19 @@ $csrfToken = csrfToken();
     }
 
     .demo-creds {
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
+      background: rgba(56,189,248,.08);
+      border: 1px solid rgba(56,189,248,.25);
       border-radius: 10px;
       padding: 12px 16px;
       margin-top: 24px;
       font-size: .78rem;
-      color: #0369a1;
+      color: #7dd3fc;
     }
 
-    .demo-creds strong { display: block; margin-bottom: 6px; color: #0284c7; }
+    .demo-creds strong { display: block; margin-bottom: 6px; color: #38bdf8; }
     .demo-creds code {
-      background: #e0f2fe;
+      background: rgba(56,189,248,.15);
+      color: #bae6fd;
       padding: 1px 5px;
       border-radius: 4px;
       font-size: .76rem;
@@ -263,7 +271,7 @@ $csrfToken = csrfToken();
                placeholder="Enter password"
                autocomplete="current-password" required>
         <button class="btn btn-outline-secondary" type="button" id="togglePass"
-                style="border-radius:0 10px 10px 0; border:1.5px solid #e2e8f0">
+                style="border-radius:0 10px 10px 0; border:1.5px solid #232b3a; background:#161c29; color:#94a3b8">
           <i class="bi bi-eye" id="eyeIcon"></i>
         </button>
       </div>
