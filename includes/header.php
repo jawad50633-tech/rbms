@@ -43,7 +43,7 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
       --sidebar-active:  #3b82f6;
       --sidebar-width:   260px;
       --topbar-height:   60px;
-      --body-bg:         #f1f5f9;
+      --body-bg:         #080808;
       --card-radius:     14px;
       --text-muted:      #64748b;
     }
