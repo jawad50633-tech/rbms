@@ -344,7 +344,7 @@ renderHeader(
             <?php if (!empty($editStudent['photo'])): ?>
             <div class="mb-2">
               <img src="<?= BASE_URL ?>/uploads/photos/<?= e($editStudent['photo']) ?>"
-                   style="width:80px;height:80px;object-fit:cover;border-radius:10px;border:2px solid #e2e8f0">
+                   style="width:80px;height:80px;object-fit:cover;border-radius:10px;border:2px solid #232b3a">
             </div>
             <?php endif; ?>
             <input type="file" class="form-control" name="photo"

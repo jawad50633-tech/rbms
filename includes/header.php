@@ -38,14 +38,22 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
 
   <style>
     :root {
-      --sidebar-bg:      #0f172a;
-      --sidebar-hover:   #1e293b;
+      --sidebar-bg:      #0a0e17;
+      --sidebar-hover:   #1a2130;
       --sidebar-active:  #3b82f6;
       --sidebar-width:   260px;
       --topbar-height:   60px;
-      --body-bg:         #080808;
+      --body-bg:         #05070c;
       --card-radius:     14px;
-      --text-muted:      #64748b;
+      --text-muted:      #8b96a8;
+
+      /* Dark theme surfaces */
+      --surface:         #10151f;
+      --surface-alt:     #161c29;
+      --surface-border:  #232b3a;
+      --surface-border-soft: #1b2130;
+      --text-primary:    #e7ebf3;
+      --text-secondary:  #a3adc2;
     }
 
     * { box-sizing: border-box; }
@@ -53,9 +61,17 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
     body {
       font-family: 'Inter', sans-serif;
       background: var(--body-bg);
+      color: var(--text-primary);
       margin: 0;
       overflow-x: hidden;
     }
+
+    ::selection { background: rgba(59,130,246,.35); color: #fff; }
+
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--body-bg); }
+    ::-webkit-scrollbar-thumb { background: #263042; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb:hover { background: #324058; }
 
     /* ── Sidebar ── */
     #sidebar {
@@ -201,12 +217,12 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
     #topbar {
       position: sticky;
       top: 0;
-      background: #fff;
+      background: var(--surface);
       height: var(--topbar-height);
       display: flex;
       align-items: center;
       padding: 0 28px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--surface-border);
       z-index: 1030;
       gap: 16px;
     }
@@ -214,7 +230,7 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
     #topbar .page-title {
       font-size: 1rem;
       font-weight: 600;
-      color: #0f172a;
+      color: var(--text-primary);
       margin: 0;
       flex: 1;
     }
@@ -225,12 +241,14 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
       gap: 12px;
     }
 
+    #topbar .topbar-right .text-muted { color: var(--text-secondary) !important; }
+
     .sidebar-toggle {
       display: none;
       background: none;
       border: none;
       font-size: 1.3rem;
-      color: #64748b;
+      color: var(--text-secondary);
       cursor: pointer;
       padding: 4px;
     }
@@ -243,16 +261,17 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
 
     /* ── Stat Cards ── */
     .stat-card {
-      background: #fff;
+      background: var(--surface);
       border-radius: var(--card-radius);
       padding: 24px;
-      border: 1px solid #e2e8f0;
-      transition: box-shadow .25s, transform .25s;
+      border: 1px solid var(--surface-border);
+      transition: box-shadow .25s, transform .25s, border-color .25s;
     }
 
     .stat-card:hover {
-      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      box-shadow: 0 8px 28px rgba(0,0,0,.45);
       transform: translateY(-2px);
+      border-color: #2d3852;
     }
 
     .stat-card .stat-icon {
@@ -268,7 +287,7 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
     .stat-card .stat-value {
       font-size: 2rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--text-primary);
       line-height: 1.1;
     }
 
@@ -282,15 +301,16 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
 
     /* ── Content Cards ── */
     .content-card {
-      background: #fff;
+      background: var(--surface);
       border-radius: var(--card-radius);
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--surface-border);
       overflow: hidden;
+      color: var(--text-primary);
     }
 
     .content-card .card-header-custom {
       padding: 16px 24px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--surface-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -301,6 +321,7 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
       margin: 0;
       font-weight: 600;
       font-size: .9rem;
+      color: var(--text-primary);
     }
 
     .content-card .card-body-custom {
@@ -311,28 +332,41 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
     .table-custom {
       font-size: .84rem;
       margin: 0;
+      color: var(--text-primary);
     }
 
     .table-custom thead th {
-      background: #f8fafc;
-      color: #64748b;
+      background: var(--surface-alt);
+      color: var(--text-secondary);
       font-weight: 600;
       font-size: .74rem;
       text-transform: uppercase;
       letter-spacing: .5px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--surface-border);
       padding: 12px 16px;
     }
 
     .table-custom tbody td {
       padding: 12px 16px;
       vertical-align: middle;
-      border-bottom: 1px solid #f1f5f9;
-      color: #1e293b;
+      border-bottom: 1px solid var(--surface-border-soft);
+      color: var(--text-primary);
+      background: transparent;
     }
 
     .table-custom tbody tr:last-child td { border-bottom: none; }
-    .table-custom tbody tr:hover { background: #f8fafc; }
+    .table-custom tbody tr:hover td { background: rgba(255,255,255,.03); }
+
+    /* Bootstrap table base override (any plain .table used inside dark cards) */
+    .content-card .table,
+    .content-card table {
+      color: var(--text-primary);
+    }
+    .content-card .table > :not(caption) > * > * {
+      background-color: transparent;
+      color: var(--text-primary);
+      border-bottom-color: var(--surface-border-soft);
+    }
 
     /* ── Badges ── */
     .badge-role {
@@ -343,23 +377,51 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
     }
 
     /* ── Forms ── */
-    .form-label { font-size: .84rem; font-weight: 600; color: #374151; }
+    .form-label { font-size: .84rem; font-weight: 600; color: var(--text-secondary); }
     .form-control, .form-select {
       font-size: .88rem;
       border-radius: 8px;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--surface-border);
+      background-color: var(--surface-alt);
+      color: var(--text-primary);
     }
+    .form-control::placeholder { color: #6b7690; }
     .form-control:focus, .form-select:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+      background-color: var(--surface-alt);
+      color: var(--text-primary);
     }
+    .form-control:disabled, .form-select:disabled,
+    .form-control[readonly] {
+      background-color: #0d121c;
+      color: var(--text-muted);
+    }
+    .form-select option { background: var(--surface-alt); color: var(--text-primary); }
+    .input-group-text {
+      background-color: var(--surface-alt);
+      border: 1px solid var(--surface-border);
+      color: var(--text-secondary);
+    }
+    .form-check-input { background-color: var(--surface-alt); border-color: var(--surface-border); }
+    .form-check-input:checked { background-color: #3b82f6; border-color: #3b82f6; }
+    hr { border-color: var(--surface-border); opacity: 1; }
 
     /* ── Buttons ── */
     .btn { border-radius: 8px; font-size: .84rem; font-weight: 500; }
     .btn-sm { padding: 4px 10px; font-size: .78rem; }
+    .btn-light { background-color: var(--surface-alt); border-color: var(--surface-border); color: var(--text-primary); }
+    .btn-light:hover { background-color: #1d2434; border-color: var(--surface-border); color: var(--text-primary); }
+    .btn-outline-secondary { color: var(--text-secondary); border-color: var(--surface-border); }
+    .btn-outline-secondary:hover { background-color: var(--surface-alt); color: var(--text-primary); border-color: var(--surface-border); }
 
     /* ── Alerts ── */
     .alert { border-radius: 10px; font-size: .85rem; }
+    .alert-success { background: rgba(16,185,129,.12); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
+    .alert-danger  { background: rgba(239,68,68,.12); color: #fca5a5; border-color: rgba(239,68,68,.3); }
+    .alert-warning { background: rgba(245,158,11,.12); color: #fcd34d; border-color: rgba(245,158,11,.3); }
+    .alert-info    { background: rgba(6,182,212,.12); color: #67e8f9; border-color: rgba(6,182,212,.3); }
+    .btn-close { filter: invert(1) grayscale(1) brightness(1.8); }
 
     /* ── Avatar in table ── */
     .table-avatar {
@@ -373,14 +435,56 @@ function renderHeader(string $title = 'Dashboard', string $activePage = ''): voi
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: #e2e8f0;
+      background: var(--surface-alt);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: .78rem;
       font-weight: 700;
-      color: #475569;
+      color: var(--text-secondary);
+      border: 1px solid var(--surface-border);
     }
+
+    /* ── Misc text helpers used across pages ── */
+    .text-dark { color: var(--text-primary) !important; }
+    .text-muted { color: var(--text-muted) !important; }
+    .text-secondary { color: var(--text-secondary) !important; }
+    a { color: #60a5fa; }
+    a:hover { color: #93c5fd; }
+    .bg-white { background-color: var(--surface-alt) !important; }
+    .dropdown-menu {
+      background-color: var(--surface-alt);
+      border: 1px solid var(--surface-border);
+    }
+    .dropdown-item { color: var(--text-primary); }
+    .dropdown-item:hover, .dropdown-item:focus { background-color: var(--surface-border-soft); color: var(--text-primary); }
+    .modal-content { background-color: var(--surface); color: var(--text-primary); border: 1px solid var(--surface-border); }
+    .modal-header, .modal-footer { border-color: var(--surface-border); }
+    .nav-tabs { border-color: var(--surface-border); }
+    .nav-tabs .nav-link { color: var(--text-secondary); }
+    .nav-tabs .nav-link.active { background: var(--surface-alt); color: var(--text-primary); border-color: var(--surface-border) var(--surface-border) var(--surface); }
+    .pagination .page-link { background-color: var(--surface-alt); border-color: var(--surface-border); color: var(--text-primary); }
+    .pagination .page-item.active .page-link { background-color: #3b82f6; border-color: #3b82f6; }
+    .pagination .page-item.disabled .page-link { background-color: var(--surface); color: var(--text-muted); }
+
+    /* ── Bootstrap utility overrides used throughout the dashboards ── */
+    .bg-light { background-color: var(--surface-alt) !important; }
+    .bg-body { background-color: var(--body-bg) !important; }
+    table.table-light thead th,
+    .table-light { background-color: var(--surface-alt) !important; color: var(--text-primary) !important; }
+    .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(255,255,255,.02); color: var(--text-primary); }
+    .card { background-color: var(--surface); border-color: var(--surface-border); color: var(--text-primary); }
+    .card-header, .card-footer { background-color: var(--surface-alt); border-color: var(--surface-border); }
+    .list-group-item { background-color: var(--surface); border-color: var(--surface-border-soft); color: var(--text-primary); }
+    .list-group-item.active { background-color: rgba(59,130,246,.15); border-color: #3b82f6; color: #93c5fd; }
+    .border { border-color: var(--surface-border) !important; }
+    .border-top { border-top-color: var(--surface-border) !important; }
+    .border-bottom { border-bottom-color: var(--surface-border) !important; }
+    code { background: var(--surface-alt); color: #f0abfc; padding: 1px 5px; border-radius: 4px; }
+    .accordion-item { background-color: var(--surface); border-color: var(--surface-border); }
+    .accordion-button { background-color: var(--surface-alt); color: var(--text-primary); }
+    .accordion-button:not(.collapsed) { background-color: rgba(59,130,246,.12); color: #93c5fd; }
+    .accordion-body { color: var(--text-secondary); }
 
     /* ── Responsive ── */
     @media (max-width: 991px) {

@@ -249,12 +249,12 @@ renderHeader('Fees Manager', 'fees');
           <td>
             <?php if ($s['has_admission'] > 0): ?>
               <span class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-2 small fw-700"
-                    style="background:rgba(16,185,129,.1);color:#065f46;border:1px solid #065f46">
+                    style="background:rgba(16,185,129,.1);color:#34d399;border:1px solid #34d399">
                 <i class="bi bi-check-circle-fill"></i> PAID
               </span>
             <?php else: ?>
               <span class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-2 small fw-700"
-                    style="background:rgba(239,68,68,.1);color:#991b1b;border:1px solid #991b1b">
+                    style="background:rgba(239,68,68,.1);color:#f87171;border:1px solid #f87171">
                 <i class="bi bi-x-circle-fill"></i> DUE
                 <small class="fw-400">Rs.<?= number_format($s['admission_fee'] ?? 800) ?></small>
               </span>
@@ -265,12 +265,12 @@ renderHeader('Fees Manager', 'fees');
           <td>
             <?php if ($s['paid_this_month'] > 0): ?>
               <span class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-2 small fw-700"
-                    style="background:rgba(16,185,129,.1);color:#065f46;border:1px solid #065f46">
+                    style="background:rgba(16,185,129,.1);color:#34d399;border:1px solid #34d399">
                 <i class="bi bi-check-circle-fill"></i> PAID
               </span>
             <?php else: ?>
               <span class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-2 small fw-700"
-                    style="background:rgba(239,68,68,.1);color:#991b1b;border:1px solid #991b1b">
+                    style="background:rgba(239,68,68,.1);color:#f87171;border:1px solid #f87171">
                 <i class="bi bi-clock-fill"></i> DUE
                 <small class="fw-400">Rs.<?= number_format($s['monthly_fee'] ?? 3000) ?></small>
               </span>
@@ -428,7 +428,7 @@ function openPayModal(s) {
   if (s.has_admission > 0) {
     cardAdm.style.opacity = '.4';
     cardAdm.style.cursor  = 'not-allowed';
-    cardAdm.style.background = '#f8f9fa';
+    cardAdm.style.background = '#0d121c';
     textAdm.innerHTML = '<i class="bi bi-check2-circle text-success me-1"></i>Already Settled';
     cardAdm._disabled = true;
   } else {
@@ -443,7 +443,7 @@ function openPayModal(s) {
   if (s.paid_month > 0) {
     cardMon.style.opacity = '.4';
     cardMon.style.cursor  = 'not-allowed';
-    cardMon.style.background = '#f8f9fa';
+    cardMon.style.background = '#0d121c';
     textMon.innerHTML = '<i class="bi bi-check2-circle text-success me-1"></i>Paid This Month';
     cardMon._disabled = true;
   } else {

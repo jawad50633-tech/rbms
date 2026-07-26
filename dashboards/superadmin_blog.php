@@ -233,30 +233,30 @@ renderHeader('Blog Management', 'blog');
 .status-published { background:#d1fae5;color:#065f46; }
 .status-draft      { background:#fef3c7;color:#92400e; }
 .status-archived   { background:#f1f5f9;color:#475569; }
-.post-card { background:#fff;border-radius:12px;border:1px solid #e2e8f0;transition:box-shadow .2s,transform .2s;overflow:hidden;height:100%;display:flex;flex-direction:column; }
-.post-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.09);transform:translateY(-2px); }
+.post-card { background:var(--surface);border-radius:12px;border:1px solid var(--surface-border);transition:box-shadow .2s,transform .2s;overflow:hidden;height:100%;display:flex;flex-direction:column; }
+.post-card:hover { box-shadow:0 6px 24px rgba(0,0,0,.45);transform:translateY(-2px); }
 .post-card-cover { height:130px;background:linear-gradient(135deg,#3b82f6 0%,#8b5cf6 100%);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:rgba(255,255,255,.4);overflow:hidden;position:relative; }
 .post-card-cover img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover; }
 .post-card-body { padding:16px;flex:1;display:flex;flex-direction:column; }
-.post-card-title { font-size:.9rem;font-weight:700;color:#0f172a;margin-bottom:6px;line-height:1.35; }
-.post-card-meta  { font-size:.74rem;color:#64748b;margin-bottom:10px; }
-.post-card-footer { margin-top:auto;padding-top:10px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between; }
-.filter-bar { background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:14px 18px;margin-bottom:20px; }
+.post-card-title { font-size:.9rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;line-height:1.35; }
+.post-card-meta  { font-size:.74rem;color:var(--text-muted);margin-bottom:10px; }
+.post-card-footer { margin-top:auto;padding-top:10px;border-top:1px solid var(--surface-border-soft);display:flex;align-items:center;justify-content:space-between; }
+.filter-bar { background:var(--surface);border-radius:12px;border:1px solid var(--surface-border);padding:14px 18px;margin-bottom:20px; }
 .blog-editor textarea { font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:.84rem;line-height:1.7;resize:vertical;min-height:340px; }
-.char-count { font-size:.72rem;color:#94a3b8;text-align:right;margin-top:3px; }
-.post-preview-body { line-height:1.8;font-size:.92rem;color:#334155;white-space:pre-wrap;word-break:break-word; }
+.char-count { font-size:.72rem;color:var(--text-muted);text-align:right;margin-top:3px; }
+.post-preview-body { line-height:1.8;font-size:.92rem;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word; }
 .cat-badge { display:inline-block;padding:2px 8px;border-radius:20px;font-size:.7rem;font-weight:600;background:#ede9fe;color:#5b21b6; }
-.blog-tabs .nav-link { color:#64748b;font-size:.84rem;font-weight:500;border:none;border-bottom:2px solid transparent;border-radius:0;padding:8px 16px; }
-.blog-tabs .nav-link.active { color:#3b82f6;border-bottom-color:#3b82f6;background:none; }
-.blog-tabs .nav-link:hover  { color:#0f172a;background:#f8fafc; }
+.blog-tabs .nav-link { color:var(--text-secondary);font-size:.84rem;font-weight:500;border:none;border-bottom:2px solid transparent;border-radius:0;padding:8px 16px; }
+.blog-tabs .nav-link.active { color:#60a5fa;border-bottom-color:#3b82f6;background:none; }
+.blog-tabs .nav-link:hover  { color:var(--text-primary);background:var(--surface-alt); }
 
 /* Cover upload zone */
 .cover-upload-zone {
-    border:2px dashed #cbd5e1;border-radius:10px;padding:20px;text-align:center;
-    cursor:pointer;transition:border-color .2s,background .2s;background:#f8fafc;
+    border:2px dashed var(--surface-border);border-radius:10px;padding:20px;text-align:center;
+    cursor:pointer;transition:border-color .2s,background .2s;background:var(--surface-alt);
     position:relative;
 }
-.cover-upload-zone:hover,.cover-upload-zone.drag-over { border-color:#3b82f6;background:#eff6ff; }
+.cover-upload-zone:hover,.cover-upload-zone.drag-over { border-color:#3b82f6;background:rgba(59,130,246,.08); }
 .cover-upload-zone input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
 .cover-preview { width:100%;height:160px;object-fit:cover;border-radius:8px;display:block; }
 .cover-preview-wrap { position:relative;display:inline-block;width:100%; }
@@ -676,11 +676,11 @@ switchCoverTab('url');
         &nbsp;·&nbsp;<i class="bi bi-eye me-1"></i><?= number_format($editPost['views']) ?> views
       </span>
     </div>
-    <h2 style="font-size:1.6rem;font-weight:700;color:#0f172a;margin-bottom:8px"><?= e($editPost['title']) ?></h2>
+    <h2 style="font-size:1.6rem;font-weight:700;color:#e7ebf3;margin-bottom:8px"><?= e($editPost['title']) ?></h2>
     <?php if ($editPost['excerpt']): ?>
-    <p style="font-size:.95rem;color:#475569;font-style:italic;border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:20px"><?= e($editPost['excerpt']) ?></p>
+    <p style="font-size:.95rem;color:#a3adc2;font-style:italic;border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:20px"><?= e($editPost['excerpt']) ?></p>
     <?php endif; ?>
-    <hr style="border-color:#e2e8f0">
+    <hr style="border-color:#232b3a">
     <div class="post-preview-body mt-4"><?= e($editPost['body']) ?></div>
   </div>
 </div>

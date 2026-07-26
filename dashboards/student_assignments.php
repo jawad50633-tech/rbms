@@ -363,7 +363,7 @@ renderHeader(
 
                     <div id="dropZone"
                          class="border border-2 border-dashed rounded-3 p-5 text-center"
-                         style="border-color:#cbd5e1!important;background:#f8fafc;cursor:pointer"
+                         style="border-color:#232b3a!important;background:#161c29;cursor:pointer"
                          onclick="document.getElementById('fileInput').click()">
 
                         <i class="bi bi-cloud-upload-fill text-primary"
@@ -455,19 +455,19 @@ renderHeader(
 
         zone.addEventListener('dragover', function (e) {
             e.preventDefault();
-            zone.style.background   = '#eff6ff';
+            zone.style.background   = 'rgba(59,130,246,.10)';
             zone.style.borderColor  = '#3b82f6';
         });
 
         zone.addEventListener('dragleave', function () {
-            zone.style.background  = '#f8fafc';
-            zone.style.borderColor = '#cbd5e1';
+            zone.style.background  = '#161c29';
+            zone.style.borderColor = '#232b3a';
         });
 
         zone.addEventListener('drop', function (e) {
             e.preventDefault();
-            zone.style.background  = '#f8fafc';
-            zone.style.borderColor = '#cbd5e1';
+            zone.style.background  = '#161c29';
+            zone.style.borderColor = '#232b3a';
 
             if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                 // FIX #8 — DataTransfer assignment is not supported in all browsers.
