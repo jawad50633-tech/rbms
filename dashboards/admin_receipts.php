@@ -24,7 +24,7 @@ if ($print_id) {
 
     if (!$r) { header('Location: admin_fees.php'); exit; }
 
-    $copies = ['Office Copy', 'Student Copy', 'Teacher Copy'];
+    $copies = ['Office Copy', 'Teacher Copy', 'Student Copy'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
