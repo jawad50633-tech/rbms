@@ -144,8 +144,6 @@ renderHeader('Monthly Payments', 'fees');
           <th>Discount</th>
           <th>Paid</th>
           <th>Date</th>
-          <th>Receipt</th>
-          <th class="pe-4">Collected By</th>
         </tr>
       </thead>
       <tbody>
@@ -194,10 +192,6 @@ renderHeader('Monthly Payments', 'fees');
           <td class="small fw-600 text-success">Rs. <?= number_format($p['final_amount']) ?></td>
 
           <td class="small text-muted"><?= date('d M Y', strtotime($p['payment_date'])) ?></td>
-
-          <td class="small"><code><?= e($p['receipt_number']) ?></code></td>
-
-          <td class="small pe-4"><?= e($p['collected_by_name'] ?? '—') ?></td>
         </tr>
         <?php endforeach; ?>
         <?php if (empty($payments)): ?>
