@@ -595,6 +595,9 @@ function getNavLinks(string $role, string $activePage): array {
             ['key' => 'submissions',   'label' => 'All Submissions',       'icon' => 'cloud-upload-fill', 'url' => $base . 'superadmin_submissions.php'],
             ['key' => 'fees',          'label' => 'Fees Manager',          'icon' => 'cash-coin',         'url' => $base . 'superadmin_fees.php'],
             ['key' => 'fees_audit',    'label' => 'Fees Audit',            'icon' => 'shield-lock-fill',  'url' => $base . 'admin_fees_audit.php'],
+            ['key' => 'fees_monthly',  'label' => 'Monthly Payments',      'icon' => 'calendar2-check-fill', 'url' => $base . 'monthly.php'],
+            
+
         ];
         $links['System'] = [
             ['key' => 'activity', 'label' => 'Activity Log', 'icon' => 'clock-history', 'url' => $base . 'superadmin_activity.php'],
