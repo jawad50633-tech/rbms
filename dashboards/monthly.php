@@ -151,9 +151,6 @@ renderHeader('Monthly Payments', 'fees');
         <tr>
           <td class="ps-4">
             <div class="d-flex align-items-center gap-2">
-              <div class="table-avatar-placeholder">
-                <?= strtoupper(substr($p['student_name'], 0, 1)) ?>
-              </div>
               <div>
                 <div class="fw-600 small"><?= e($p['student_name']) ?></div>
                 <div class="text-muted" style="font-size:.72rem">
