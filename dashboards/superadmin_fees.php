@@ -149,6 +149,29 @@ $month_collected = $db->prepare(
 $month_collected->execute([$current_month, $current_year]);
 $month_collected = (float)$month_collected->fetchColumn();
 
+// ── Pending Fees calculation ────────────────────────────────
+$pending_stmt = $db->prepare(
+    "SELECT
+        COALESCE(SUM(CASE WHEN has_admission = 0 THEN IFNULL(c.admission_fee, 800) ELSE 0 END), 0) AS pending_admission,
+        COALESCE(SUM(CASE WHEN paid_this_month = 0 THEN IFNULL(c.monthly_fee, 3000) ELSE 0 END), 0) AS pending_monthly,
+        SUM(CASE WHEN has_admission = 0 OR paid_this_month = 0 THEN 1 ELSE 0 END) AS pending_students
+     FROM (
+        SELECT u.id,
+               (SELECT COUNT(*) FROM fees WHERE student_id=u.id AND fee_type='Admission') AS has_admission,
+               (SELECT COUNT(*) FROM fees WHERE student_id=u.id AND fee_type='Monthly'
+                    AND MONTH(payment_date)=? AND YEAR(payment_date)=?) AS paid_this_month,
+               s.class_id
+        FROM users u
+        JOIN students s ON s.user_id = u.id
+        WHERE u.role = 'student' AND u.status = 'active'
+     ) x
+     LEFT JOIN classes c ON c.id = x.class_id"
+);
+$pending_stmt->execute([$current_month, $current_year]);
+$pending = $pending_stmt->fetch();
+$pending_amount   = (float)($pending['pending_admission'] ?? 0) + (float)($pending['pending_monthly'] ?? 0);
+$pending_students = (int)($pending['pending_students'] ?? 0);
+
 $csrf = csrfToken();
 renderHeader('Fees Manager', 'fees');
 ?>
@@ -160,6 +183,7 @@ renderHeader('Fees Manager', 'fees');
     ['label' => 'Total Collected',          'value' => 'Rs. ' . number_format($stats['total_collected'] ?? 0), 'icon' => 'cash-coin', 'color' => '10b981', 'bg' => 'd1fae5'],
     ['label' => 'Total Discounts Given',    'value' => 'Rs. ' . number_format($stats['total_discount'] ?? 0),  'icon' => 'tag-fill',  'color' => 'f59e0b', 'bg' => 'fef3c7'],
     ['label' => 'Total Transactions',       'value' => number_format($stats['total_transactions'] ?? 0),        'icon' => 'receipt',   'color' => '8b5cf6', 'bg' => 'ede9fe'],
+    ['label' => 'Pending Fees', 'value' => 'Rs. ' . number_format($pending_amount), 'icon' => 'exclamation-triangle-fill', 'color' => 'ef4444', 'bg' => 'fee2e2'],
   ]; foreach ($cards as $c): ?>
   <div class="col-6 col-md-3">
     <div class="stat-card">
