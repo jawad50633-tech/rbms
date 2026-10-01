@@ -25,6 +25,9 @@ if ($print_id) {
     if (!$r) { header('Location: admin_fees.php'); exit; }
 
     $copies = ['Office Copy', 'Teacher Copy', 'Student Copy'];
+
+    // Fee month (based on the payment date, not today's date)
+    $fee_month = date('F Y', strtotime($r['payment_date']));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -237,6 +240,14 @@ if ($print_id) {
         <div class="info-key">Date Paid</div>
         <div class="info-val"><?= date('d-m-Y', strtotime($r['payment_date'])) ?></div>
       </div>
+
+      <?php if ($r['fee_type'] === 'Monthly'): ?>
+      <div class="info-row">
+        <div class="info-key">Fee Month</div>
+        <div class="info-val"><?= strtoupper($fee_month) ?></div>
+      </div>
+      <?php endif; ?>
+
       <div class="info-row">
         <div class="info-key">Collected By</div>
         <div class="info-val"><?= e($r['collected_by_name'] ?? 'Admin') ?></div>
