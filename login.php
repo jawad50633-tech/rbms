@@ -115,7 +115,7 @@ $csrfToken = csrfToken();
     }
 
     .login-card {
-      background: #10151f;
+      background: #8f949f;
       border: 1px solid #232b3a;
       border-radius: 20px;
       padding: 48px 44px;
