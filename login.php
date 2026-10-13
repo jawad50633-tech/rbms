@@ -102,7 +102,7 @@ $csrfToken = csrfToken();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../logo.png">
+  <link rel="icon" type="image/png" href="lgo.png">
   <style>
     body {
       min-height: 100vh;
@@ -138,7 +138,7 @@ $csrfToken = csrfToken();
       background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
     }
 
-    /* ─── Large Professional Holographic Telemetry Panels (Left & Right) ─── */
+    /* ─── Holographic Telemetry Panels (Left & Right) ─── */
     .telemetry-panel {
       position: absolute;
       width: 280px;
@@ -236,17 +236,20 @@ $csrfToken = csrfToken();
     }
 
     .login-logo {
-      width: 58px;
-      height: 58px;
-      background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
-      border-radius: 14px;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
-      color: #fff;
-      margin: 0 auto 20px;
-      box-shadow: 0 0 30px rgba(14, 165, 233, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+      filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.5));
+    }
+
+    .login-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
     }
 
     .login-title {
@@ -395,7 +398,7 @@ $csrfToken = csrfToken();
 <!-- Login Card -->
 <div class="login-card">
   <div class="login-logo">
-    <i class="bi bi-shield-lock-fill"></i>
+    <img src="lgo.png" alt="AI Future Leaders Academy Logo">
   </div>
   <h1 class="login-title"><?= APP_NAME ?></h1>
   <p class="login-subtitle">Secure access authentication</p>
