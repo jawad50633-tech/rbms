@@ -116,7 +116,7 @@ $csrfToken = csrfToken();
       position: relative;
     }
 
-    /* ─── Realistic Cybernetic Canvas/Grid Background ─── */
+    /* ─── Cybernetic Background ─── */
     .cyber-bg {
       position: absolute;
       top: 0;
@@ -132,30 +132,12 @@ $csrfToken = csrfToken();
       background-size: 50px 50px;
     }
 
-    /* Realistic Isometric Laser Grid Floor & Ceiling */
-    .cyber-bg::before {
-      content: "";
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      top: -50%;
-      left: -50%;
-      background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 60%);
-      animation: ambientPulse 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes ambientPulse {
-      0% { transform: scale(1); opacity: 0.5; }
-      100% { transform: scale(1.2); opacity: 1; }
-    }
-
-    /* Realistic Dynamic Scanning Laser Beam */
     .laser-beam {
       position: absolute;
       width: 100%;
       height: 2px;
       background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.8), #38bdf8, rgba(14, 165, 233, 0.8), transparent);
-      box-shadow: 0 0 20px #0ea5e9, 0 0 40px #38bdf8;
+      box-shadow: 0 0 20px #0ea5e9;
       animation: sweepLaser 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       z-index: 1;
     }
@@ -166,26 +148,75 @@ $csrfToken = csrfToken();
       100% { top: 105%; opacity: 0; }
     }
 
-    /* Floating Technical Data Nodes / HUD Coordinates */
-    .hud-node {
+    /* ─── Interactive Clickable Robots ─── -->
+    .interactive-robot {
       position: absolute;
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: rgba(56, 189, 248, 0.3);
-      letter-spacing: 2px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      padding: 10px 14px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      z-index: 20;
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.2);
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      font-weight: 500;
       user-select: none;
-      z-index: 1;
     }
 
-    .hud-node-1 { top: 10%; left: 8%; animation: fadeInOut 4s ease-in-out infinite; }
-    .hud-node-2 { bottom: 12%; right: 8%; animation: fadeInOut 6s ease-in-out infinite reverse; }
-
-    @keyframes fadeInOut {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 0.7; }
+    .interactive-robot:hover {
+      background: rgba(14, 165, 233, 0.2);
+      border-color: #38bdf8;
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 25px rgba(14, 165, 233, 0.4);
     }
 
-    /* ─── Realistic Glassmorphism Login Card ─── */
+    .robot-1 { top: 15%; left: 8%; animation: floatRobot1 4s ease-in-out infinite; }
+    .robot-2 { bottom: 15%; right: 8%; animation: floatRobot2 5s ease-in-out infinite; }
+
+    @keyframes floatRobot1 {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes floatRobot2 {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ─── Realistic Status Dialog Popup ─── */
+    .robot-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid #0ea5e9;
+      color: #f1f5f9;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      z-index: 100;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .robot-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ─── Glassmorphism Login Card ─── */
     .login-card {
       position: relative;
       z-index: 10;
@@ -221,7 +252,7 @@ $csrfToken = csrfToken();
       font-size: 1.6rem;
       color: #fff;
       margin: 0 auto 20px;
-      box-shadow: 0 0 25px rgba(14, 165, 233, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 25px rgba(14, 165, 233, 0.4);
     }
 
     .login-title {
@@ -230,7 +261,6 @@ $csrfToken = csrfToken();
       color: #f1f5f9;
       text-align: center;
       margin-bottom: 4px;
-      letter-spacing: -0.02em;
     }
 
     .login-subtitle {
@@ -253,7 +283,7 @@ $csrfToken = csrfToken();
       background: rgba(15, 23, 42, 0.6);
       color: #f1f5f9;
       font-size: .9rem;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.25s ease;
     }
 
     .form-control::placeholder { color: #475569; }
@@ -295,30 +325,34 @@ $csrfToken = csrfToken();
       color: #fff;
     }
 
-    .btn-login:active {
-      transform: translateY(0);
-    }
-
     .alert {
       border-radius: 10px;
       font-size: 0.87rem;
-      animation: shake 0.4s ease-in-out both;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-4px); }
-      40%, 80% { transform: translateX(4px); }
     }
   </style>
 </head>
 <body>
 
-<!-- Realistic Cybernetic Background -->
+<!-- Cybernetic Background -->
 <div class="cyber-bg">
   <div class="laser-beam"></div>
-  <div class="hud-node hud-node-1">SYS.SECURE // AUTH_PORT: 443 // NODE_ACTIVE</div>
-  <div class="hud-node hud-node-2">LAT: 30.1798° N | LONG: 66.9750° E // ENCRYPTION: SHA-256</div>
+</div>
+
+<!-- Interactive Clickable Robotic Units -->
+<div class="interactive-robot robot-1" onclick="showRobotMessage('🤖 Sentinel Unit Alpha: All firewall checkpoints active. Connection is fully encrypted via TLS 1.3.')">
+  <i class="bi bi-robot fs-5"></i>
+  <span>Check Security Status</span>
+</div>
+
+<div class="interactive-robot robot-2" onclick="showRobotMessage('💡 Pro Tip: Make sure your password contains a mix of alphanumeric characters and symbols to prevent brute force attacks.')">
+  <i class="bi bi-cpu fs-5"></i>
+  <span>Security Advice</span>
+</div>
+
+<!-- Interactive Toast Message Popup -->
+<div id="robotToast" class="robot-toast">
+  <i class="bi bi-shield-check text-info fs-4"></i>
+  <span id="toastText">Message goes here</span>
 </div>
 
 <div class="login-card">
@@ -392,6 +426,21 @@ $csrfToken = csrfToken();
       icon.className = 'bi bi-eye';
     }
   });
+
+  // Interactive Robot Message Handler
+  let toastTimer;
+  function showRobotMessage(message) {
+    const toast = document.getElementById('robotToast');
+    const toastText = document.getElementById('toastText');
+    
+    toastText.innerText = message;
+    toast.classList.add('show');
+    
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4500);
+  }
 </script>
 </body>
 </html>
