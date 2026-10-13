@@ -106,33 +106,109 @@ $csrfToken = csrfToken();
   <style>
     body {
       min-height: 100vh;
-      background: linear-gradient(-45deg, #1e3a5f, #04112f, #232b3a, #031540);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      background: #090d16;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Inter', sans-serif;
       padding: 20px;
-      overflow-x: hidden;
+      overflow: hidden;
+      position: relative;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    /* ─── Robotic Background Animations ─── */
+    .robot-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
     }
 
+    /* Cybernetic grid overlay */
+    .robot-bg::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridMove 25s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(40px) rotate(0deg); }
+    }
+
+    /* Moving laser scan line */
+    .scanner-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+      box-shadow: 0 0 15px #3b82f6, 0 0 30px #1d4ed8;
+      animation: scanLaser 6s ease-in-out infinite;
+    }
+
+    @keyframes scanLaser {
+      0%, 100% { top: 0%; opacity: 0.2; }
+      50% { top: 100%; opacity: 0.9; }
+    }
+
+    /* Floating robotic holographic nodes */
+    .holo-circle {
+      position: absolute;
+      border: 1px dashed rgba(59, 130, 246, 0.2);
+      border-radius: 50%;
+      animation: rotateHolo 20s linear infinite;
+    }
+
+    .holo-1 {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      left: -100px;
+      border-color: rgba(59, 130, 246, 0.15);
+    }
+
+    .holo-2 {
+      width: 600px;
+      height: 600px;
+      bottom: -200px;
+      right: -200px;
+      animation-direction: reverse;
+      animation-duration: 35s;
+      border-color: rgba(29, 78, 216, 0.15);
+    }
+
+    @keyframes rotateHolo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ─── Login Card Styling ─── */
     .login-card {
-      background: rgba(16, 21, 31, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 10;
+      background: rgba(16, 21, 31, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       border-radius: 20px;
       padding: 48px 44px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 25px 60px rgba(0,0,0,.55);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(59, 130, 246, 0.1);
       animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       opacity: 0;
       transform: translateY(20px);
@@ -156,7 +232,7 @@ $csrfToken = csrfToken();
       font-size: 1.7rem;
       color: #fff;
       margin: 0 auto 20px;
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
       animation: bounceLogo 2s ease-in-out infinite;
     }
 
@@ -200,7 +276,7 @@ $csrfToken = csrfToken();
 
     .form-control:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 4px rgba(59,130,246,.2);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
       background: #161c29;
       color: #e7ebf3;
       transform: scale(1.01);
@@ -226,13 +302,13 @@ $csrfToken = csrfToken();
       font-size: .95rem;
       transition: all 0.3s ease;
       margin-top: 8px;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
     }
 
     .btn-login:hover {
       opacity: .95;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+      box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
       color: #fff;
     }
 
@@ -252,6 +328,13 @@ $csrfToken = csrfToken();
   </style>
 </head>
 <body>
+
+<!-- Robotic / Cybernetic Background Animations -->
+<div class="robot-bg">
+  <div class="scanner-line"></div>
+  <div class="holo-circle holo-1"></div>
+  <div class="holo-circle holo-2"></div>
+</div>
 
 <div class="login-card">
   <div class="login-logo">
