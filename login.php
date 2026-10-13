@@ -236,8 +236,8 @@ $csrfToken = csrfToken();
     }
 
     .login-logo {
-      width: 90px;
-      height: 90px;
+      width: 150px;
+      height: 150px;
       margin: 0 auto 20px;
       display: flex;
       align-items: center;
@@ -448,7 +448,7 @@ $csrfToken = csrfToken();
     </div>
 
     <button type="submit" class="btn btn-login">
-      <i class="bi bi-box-arrow-in-right me-2"></i>Authenticate
+      <i class="bi bi-box-arrow-in-right me-2"></i>Login
     </button>
   </form>
 </div>
