@@ -144,8 +144,8 @@ $csrfToken = csrfToken();
     }
 
     @keyframes gridMove {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(40px) rotate(0deg); }
+      0% { transform: translateY(0); }
+      100% { transform: translateY(40px); }
     }
 
     /* Moving laser scan line */
@@ -165,42 +165,57 @@ $csrfToken = csrfToken();
       50% { top: 100%; opacity: 0.9; }
     }
 
-    /* Floating robotic holographic nodes */
-    .holo-circle {
+    /* ─── Walking Robots ─── */
+    .walking-robot {
       position: absolute;
-      border: 1px dashed rgba(59, 130, 246, 0.2);
-      border-radius: 50%;
-      animation: rotateHolo 20s linear infinite;
+      color: rgba(59, 130, 246, 0.35);
+      font-size: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4));
+      z-index: 1;
     }
 
-    .holo-1 {
-      width: 400px;
-      height: 400px;
-      top: -100px;
-      left: -100px;
-      border-color: rgba(59, 130, 246, 0.15);
+    .walking-robot i {
+      animation: robotBob 0.6s ease-in-out infinite alternate;
     }
 
-    .holo-2 {
-      width: 600px;
-      height: 600px;
-      bottom: -200px;
-      right: -200px;
-      animation-direction: reverse;
-      animation-duration: 35s;
-      border-color: rgba(29, 78, 216, 0.15);
+    @keyframes robotBob {
+      0% { transform: translateY(0) rotate(-3deg); }
+      100% { transform: translateY(-8px) rotate(3deg); }
     }
 
-    @keyframes rotateHolo {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    /* Robot 1: Walking across the bottom */
+    .robot-1 {
+      bottom: 10%;
+      animation: walkLeftToRight 16s linear infinite;
+    }
+
+    /* Robot 2: Walking across higher up, reverse direction */
+    .robot-2 {
+      top: 15%;
+      font-size: 1.8rem;
+      color: rgba(96, 165, f5, 0.25);
+      animation: walkRightToLeft 22s linear infinite;
+      transform: scaleX(-1);
+    }
+
+    @keyframes walkLeftToRight {
+      0% { left: -100px; }
+      100% { left: calc(100% + 100px); }
+    }
+
+    @keyframes walkRightToLeft {
+      0% { right: -100px; left: auto; }
+      100% { right: calc(100% + 100px); left: auto; }
     }
 
     /* ─── Login Card Styling ─── */
     .login-card {
       position: relative;
       z-index: 10;
-      background: rgba(16, 21, 31, 0.82);
+      background: rgba(16, 21, 31, 0.85);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(59, 130, 246, 0.2);
@@ -329,11 +344,15 @@ $csrfToken = csrfToken();
 </head>
 <body>
 
-<!-- Robotic / Cybernetic Background Animations -->
+<!-- Robotic Background Animations with Walking Robots -->
 <div class="robot-bg">
   <div class="scanner-line"></div>
-  <div class="holo-circle holo-1"></div>
-  <div class="holo-circle holo-2"></div>
+  <div class="walking-robot robot-1">
+    <i class="bi bi-robot"></i>
+  </div>
+  <div class="walking-robot robot-2">
+    <i class="bi bi-cpu"></i>
+  </div>
 </div>
 
 <div class="login-card">
