@@ -106,22 +106,43 @@ $csrfToken = csrfToken();
   <style>
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #587ed6 0%, #1e3a5f 50%, #1957ea 100%);
+      background: linear-gradient(-45deg, #1e3a5f, #1957ea, #232b3a, #587ed6);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Inter', sans-serif;
       padding: 20px;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .login-card {
-      background: #10151f;
-      border: 1px solid #232b3a;
+      background: rgba(16, 21, 31, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 20px;
       padding: 48px 44px;
       width: 100%;
       max-width: 420px;
       box-shadow: 0 25px 60px rgba(0,0,0,.55);
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .login-logo {
@@ -135,6 +156,13 @@ $csrfToken = csrfToken();
       font-size: 1.7rem;
       color: #fff;
       margin: 0 auto 20px;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+      animation: bounceLogo 2s ease-in-out infinite;
+    }
+
+    @keyframes bounceLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
 
     .login-title {
@@ -165,16 +193,17 @@ $csrfToken = csrfToken();
       background: #161c29;
       color: #e7ebf3;
       font-size: .9rem;
-      transition: border-color .2s, box-shadow .2s;
+      transition: all 0.3s ease;
     }
 
     .form-control::placeholder { color: #5f6b82; }
 
     .form-control:focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+      box-shadow: 0 0 0 4px rgba(59,130,246,.2);
       background: #161c29;
       color: #e7ebf3;
+      transform: scale(1.01);
     }
 
     .input-group-text {
@@ -195,33 +224,30 @@ $csrfToken = csrfToken();
       color: #fff;
       font-weight: 600;
       font-size: .95rem;
-      transition: opacity .2s, transform .2s;
+      transition: all 0.3s ease;
       margin-top: 8px;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
 
     .btn-login:hover {
-      opacity: .92;
-      transform: translateY(-1px);
+      opacity: .95;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
       color: #fff;
     }
 
-    .demo-creds {
-      background: rgba(56,189,248,.08);
-      border: 1px solid rgba(56,189,248,.25);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-top: 24px;
-      font-size: .78rem;
-      color: #7dd3fc;
+    .btn-login:active {
+      transform: translateY(0);
     }
 
-    .demo-creds strong { display: block; margin-bottom: 6px; color: #38bdf8; }
-    .demo-creds code {
-      background: rgba(56,189,248,.15);
-      color: #bae6fd;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-size: .76rem;
+    .alert {
+      animation: shake 0.5s ease-in-out both;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
     }
   </style>
 </head>
@@ -282,8 +308,7 @@ $csrfToken = csrfToken();
       <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
     </button>
   </form>
-
- 
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
