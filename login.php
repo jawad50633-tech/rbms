@@ -106,7 +106,7 @@ $csrfToken = csrfToken();
   <style>
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      background: linear-gradient(135deg, #587ed6 0%, #1e3a5f 50%, #0f172a 100%);
       display: flex;
       align-items: center;
       justify-content: center;
