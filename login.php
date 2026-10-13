@@ -236,8 +236,8 @@ $csrfToken = csrfToken();
     }
 
     .login-logo {
-      width: 150px;
-      height: 150px;
+      width: 80px;
+      height: 80px;
       margin: 0 auto 20px;
       display: flex;
       align-items: center;
@@ -246,8 +246,8 @@ $csrfToken = csrfToken();
     }
 
     .login-logo img {
-      width: 100%;
-      height: 100%;
+      width: 150%;
+      height: 150%;
       object-fit: contain;
       border-radius: 50%;
     }
