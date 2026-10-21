@@ -306,7 +306,7 @@ foreach ($expenses as $e) {
                                        required>
                             </div>
                             <div class="col-md-5">
-                                <label for="total_cost" class="form-label fw-semibold">Total Cost ($)</label>
+                                <label for="total_cost" class="form-label fw-semibold">Total Cost (Rs.)</label>
                                 <input type="number" 
                                        step="0.01" 
                                        min="0.01" 
@@ -367,7 +367,7 @@ foreach ($expenses as $e) {
                                     <td class="fw-medium text-dark"><?= htmlspecialchars($expense['description']) ?></td>
                                     <td>
                                         <span class="badge bg-light text-dark border px-2 py-1">
-                                            $<?= number_format($expense['total_cost'], 2) ?>
+                                            Rs. <?= number_format($expense['total_cost'], 2) ?>
                                         </span>
                                     </td>
                                     <td class="text-end">
@@ -397,7 +397,7 @@ foreach ($expenses as $e) {
                             <tr class="table-light fw-bold">
                                 <td colspan="2" class="text-end">Grand Total:</td>
                                 <td colspan="2" class="text-start text-primary">
-                                    $<?= number_format($grand_total, 2) ?>
+                                    Rs. <?= number_format($grand_total, 2) ?>
                                 </td>
                             </tr>
                         </tfoot>
