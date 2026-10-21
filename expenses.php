@@ -271,7 +271,7 @@ foreach ($expenses as $e) {
                 <div class="card card-custom summary-card p-4 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <h6 class="text-white-50 text-uppercase fw-bold">Total Expenditures</h6>
-                        <h2 class="display-6 fw-bold mb-0 mt-2">$<?= number_format($grand_total, 2) ?></h2>
+                        <h2 class="display-6 fw-bold mb-0 mt-2">Rs.<?= number_format($grand_total, 2) ?></h2>
                     </div>
                     <div class="mt-3 text-white-50 small">
                         <i class="fa-solid fa-list-check me-1"></i> Total Recorded: <?= count($expenses) ?> item(s)
