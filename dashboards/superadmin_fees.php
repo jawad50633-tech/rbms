@@ -194,6 +194,7 @@ renderHeader('Fees Manager', 'fees');
     ['label' => date('F') . ' Collection', 'value' => 'Rs. ' . number_format($month_collected), 'icon' => 'calendar-check-fill', 'color' => '3b82f6', 'bg' => 'dbeafe'],
     ['label' => 'Total Collected',          'value' => 'Rs. ' . number_format($stats['total_collected'] ?? 0), 'icon' => 'cash-coin', 'color' => '10b981', 'bg' => 'd1fae5'],
     ['label' => 'Total Expenses',           'value' => 'Rs. ' . number_format($total_expenses), 'icon' => 'wallet2', 'color' => 'e11d48', 'bg' => 'fee2e2'],
+    ['label' => 'Total savings',           'value' => 'Rs. ' . number_format(1700), 'icon' => 'wallet2', 'color' => 'e11d48', 'bg' => 'fee2e2'],
     ['label' => 'Total Discounts Given',    'value' => 'Rs. ' . number_format($stats['total_discount'] ?? 0),  'icon' => 'tag-fill',  'color' => 'f59e0b', 'bg' => 'fef3c7'],
     ['label' => 'Total Transactions',       'value' => number_format($stats['total_transactions'] ?? 0),        'icon' => 'receipt',   'color' => '8b5cf6', 'bg' => 'ede9fe'],
     ['label' => 'Pending Fees',             'value' => 'Rs. ' . number_format($pending_amount), 'icon' => 'exclamation-triangle-fill', 'color' => 'ef4444', 'bg' => 'fee2e2'],
