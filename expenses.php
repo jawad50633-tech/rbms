@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF Validation
     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         $_SESSION['flash_error'] = "Invalid CSRF token. Request denied.";
-        header("Location: index.php");
+        header("Location: expenses.php");
         exit;
     }
 
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Post/Redirect/Get Pattern
-        header("Location: index.php");
+        header("Location: expenses.php");
         exit;
     }
 
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash_error'] = "Invalid expense ID.";
         }
 
-        header("Location: index.php");
+        header("Location: expenses.php");
         exit;
     }
 }
