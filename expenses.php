@@ -287,7 +287,7 @@ foreach ($expenses as $e) {
                         <?= $is_edit_mode ? 'Edit Expense Record' : 'Add New Expense' ?>
                     </h5>
                     
-                    <form action="index.php" method="POST" id="expenseForm">
+                    <form action="expenses.php" method="POST" id="expenseForm">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                         <input type="hidden" name="action" value="save_expense">
                         <?php if ($is_edit_mode): ?>
@@ -372,14 +372,14 @@ foreach ($expenses as $e) {
                                     </td>
                                     <td class="text-end">
                                         <!-- Edit Action -->
-                                        <a href="index.php?edit=<?= htmlspecialchars($expense['id']) ?>" 
+                                        <a href="expenses.php?edit=<?= htmlspecialchars($expense['id']) ?>" 
                                            class="btn btn-sm btn-outline-primary me-1" 
                                            title="Edit Expense">
                                             <i class="fa-solid fa-pen"></i> Edit
                                         </a>
 
                                         <!-- Delete Action Form -->
-                                        <form action="index.php" method="POST" class="d-inline delete-form">
+                                        <form action="expenses.php" method="POST" class="d-inline delete-form">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                                             <input type="hidden" name="action" value="delete_expense">
                                             <input type="hidden" name="id" value="<?= htmlspecialchars($expense['id']) ?>">
