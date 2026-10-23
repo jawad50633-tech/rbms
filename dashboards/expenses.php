@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/header.php';
 
 // Enforce Super Admin Role
 requireLogin([ROLE_SUPER_ADMIN]);
@@ -212,6 +212,6 @@ renderHeader('Expense Management', 'expenses');
 </div>
 
 <?php
-require_once __DIR__ . '/includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';
 renderFooter();
 ?>
