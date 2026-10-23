@@ -212,6 +212,6 @@ renderHeader('Expense Management', 'expenses');
 </div>
 
 <?php
-require_once __DIR__ . '/../includes/footer.php';
+require_once __DIR__ . '/includes/footer.php';
 renderFooter();
 ?>
