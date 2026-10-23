@@ -8,10 +8,12 @@ requireLogin([ROLE_SUPER_ADMIN]);
 $db   = getDB();
 $user = currentUser();
 
-$current_month = date('m');
-$current_year  = date('Y');
-$message       = '';
-$msgType       = 'info';
+// ── Read Filter Parameters ────────────────────────────────
+$filter_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
+$filter_year  = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+
+$message = '';
+$msgType = 'info';
 
 // ── POST: Handle Create, Update, and Delete ───────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -73,19 +75,34 @@ if (isset($_GET['edit'])) {
     $edit_expense = $stmt->fetch();
 }
 
-// ── Fetch Expenses & Summaries ─────────────────────────────
-$expenses = $db->query('SELECT * FROM expenses ORDER BY id DESC')->fetchAll();
+// ── Build Query & Parameters based on Filter ───────────────
+$where_clauses = [];
+$params        = [];
 
-$total_expenses = 0;
-foreach ($expenses as $e) {
-    $total_expenses += (float)$e['total_cost'];
+if ($filter_month > 0) {
+    $where_clauses[] = 'MONTH(created_at) = ?';
+    $params[]        = $filter_month;
 }
 
-$month_expenses_stmt = $db->prepare(
-    'SELECT SUM(total_cost) FROM expenses WHERE MONTH(created_at) = ? AND YEAR(created_at) = ?'
-);
-$month_expenses_stmt->execute([$current_month, $current_year]);
-$month_expenses = (float)$month_expenses_stmt->fetchColumn();
+if ($filter_year > 0) {
+    $where_clauses[] = 'YEAR(created_at) = ?';
+    $params[]        = $filter_year;
+}
+
+$where_sql = $where_clauses ? 'WHERE ' . implode(' AND ', $where_clauses) : '';
+
+// ── Fetch Expenses & Summaries ─────────────────────────────
+$stmt = $db->prepare("SELECT * FROM expenses {$where_sql} ORDER BY id DESC");
+$stmt->execute($params);
+$expenses = $stmt->fetchAll();
+
+$filtered_total = 0;
+foreach ($expenses as $e) {
+    $filtered_total += (float)$e['total_cost'];
+}
+
+// All-time aggregate cost
+$all_time_total = (float)$db->query('SELECT SUM(total_cost) FROM expenses')->fetchColumn();
 
 $csrf = csrfToken();
 renderHeader('Expense Management', 'expenses');
@@ -98,8 +115,10 @@ renderHeader('Expense Management', 'expenses');
       <div class="stat-icon mb-3" style="background:#fee2e2;color:#ef4444">
         <i class="bi bi-wallet2"></i>
       </div>
-      <div class="stat-value" style="font-size:1.4rem">Rs. <?= number_format($month_expenses) ?></div>
-      <div class="stat-label mt-1"><?= date('F') ?> Expenses</div>
+      <div class="stat-value" style="font-size:1.4rem">Rs. <?= number_format($filtered_total) ?></div>
+      <div class="stat-label mt-1">
+        <?= $filter_month > 0 ? date('F', mktime(0, 0, 0, $filter_month, 10)) : 'Selected Period' ?> Expenses
+      </div>
     </div>
   </div>
   <div class="col-6 col-md-6">
@@ -107,7 +126,7 @@ renderHeader('Expense Management', 'expenses');
       <div class="stat-icon mb-3" style="background:#dbeafe;color:#3b82f6">
         <i class="bi bi-cash-stack"></i>
       </div>
-      <div class="stat-value" style="font-size:1.4rem">Rs. <?= number_format($total_expenses) ?></div>
+      <div class="stat-value" style="font-size:1.4rem">Rs. <?= number_format($all_time_total) ?></div>
       <div class="stat-label mt-1">Total Expenses (All-Time)</div>
     </div>
   </div>
@@ -162,6 +181,48 @@ renderHeader('Expense Management', 'expenses');
   </div>
 </div>
 
+<!-- Header & Month Filter Bar -->
+<div class="content-card mb-3">
+  <div class="card-body-custom py-3">
+    <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+      <div>
+        <h6 class="mb-0 fw-700">
+          <i class="bi bi-receipt me-2 text-primary"></i>
+          Expenses Log
+        </h6>
+        <small class="text-muted"><?= count($expenses) ?> records found</small>
+      </div>
+
+      <!-- Filter Form -->
+      <form method="GET" class="d-flex gap-2 align-items-center">
+        <!-- Month Select -->
+        <select name="month" class="form-select form-select-sm" style="width: auto;">
+          <option value="0">All Months</option>
+          <?php for ($m = 1; $m <= 12; $m++): ?>
+            <option value="<?= $m ?>" <?= $filter_month === $m ? 'selected' : '' ?>>
+              <?= date('F', mktime(0, 0, 0, $m, 10)) ?>
+            </option>
+          <?php endfor; ?>
+        </select>
+
+        <!-- Year Select -->
+        <select name="year" class="form-select form-select-sm" style="width: auto;">
+          <?php for ($y = date('Y'); $y >= date('Y') - 5; $y--): ?>
+            <option value="<?= $y ?>" <?= $filter_year === $y ? 'selected' : '' ?>><?= $y ?></option>
+          <?php endfor; ?>
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">
+          <i class="bi bi-filter me-1"></i>Filter
+        </button>
+        <?php if ($filter_month !== (int)date('m') || $filter_year !== (int)date('Y')): ?>
+          <a href="expenses.php" class="btn btn-outline-secondary btn-sm">Reset</a>
+        <?php endif; ?>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Expenses Table -->
 <div class="content-card">
   <div class="table-responsive">
@@ -181,10 +242,10 @@ renderHeader('Expense Management', 'expenses');
           <td class="ps-4 fw-600">#<?= $e['id'] ?></td>
           <td><?= e($e['description']) ?></td>
           <td class="fw-600 text-danger">Rs. <?= number_format($e['total_cost'], 2) ?></td>
-          <td class="small text-muted"><?= $e['created_at'] ?? '—' ?></td>
+          <td class="small text-muted"><?= date('M d, Y h:i A', strtotime($e['created_at'])) ?></td>
           <td class="text-end pe-4">
             <!-- Edit Button -->
-            <a href="expenses.php?edit=<?= $e['id'] ?>" class="btn btn-sm btn-outline-primary me-1">
+            <a href="expenses.php?edit=<?= $e['id'] ?>&month=<?= $filter_month ?>&year=<?= $filter_year ?>" class="btn btn-sm btn-outline-primary me-1">
               <i class="bi bi-pencil"></i>
             </a>
             <!-- Delete Form -->
@@ -202,7 +263,7 @@ renderHeader('Expense Management', 'expenses');
         <?php if (empty($expenses)): ?>
         <tr>
           <td colspan="5" class="text-center text-muted py-5">
-            No expenses recorded yet. Use the form above to log your first entry.
+            No expenses found for the selected period.
           </td>
         </tr>
         <?php endif; ?>
