@@ -21,9 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'save_expense') {
-        $id          = (int)($_POST['id'] ?? 0);
-        $description = trim($_POST['description'] ?? '');
-        $total_cost  = (float)($_POST['total_cost'] ?? 0);
+        $id           = (int)($_POST['id'] ?? 0);
+        $description  = trim($_POST['description'] ?? '');
+        $total_cost   = (float)($_POST['total_cost'] ?? 0);
+        $expense_date = trim($_POST['expense_date'] ?? date('Y-m-d'));
+
+        // Basic date validation (YYYY-MM-DD format check)
+        $date_parts = explode('-', $expense_date);
+        $is_valid_date = count($date_parts) === 3 && checkdate((int)$date_parts[1], (int)$date_parts[2], (int)$date_parts[0]);
 
         if (empty($description)) {
             $message = 'Expense description is required.';
@@ -31,19 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($total_cost <= 0) {
             $message = 'Total cost must be a positive numeric value.';
             $msgType = 'danger';
+        } elseif (!$is_valid_date) {
+            $message = 'Please provide a valid expense date.';
+            $msgType = 'danger';
         } else {
             if ($id > 0) {
                 // UPDATE
-                $stmt = $db->prepare('UPDATE expenses SET description = ?, total_cost = ? WHERE id = ?');
-                $stmt->execute([$description, $total_cost, $id]);
+                $stmt = $db->prepare('UPDATE expenses SET description = ?, total_cost = ?, expense_date = ? WHERE id = ?');
+                $stmt->execute([$description, $total_cost, $expense_date, $id]);
                 logActivity($user['id'], "Updated expense #{$id} - Rs. " . number_format($total_cost), 'Expenses');
                 
                 $message = 'Expense updated successfully.';
                 $msgType = 'success';
             } else {
                 // CREATE
-                $stmt = $db->prepare('INSERT INTO expenses (description, total_cost) VALUES (?, ?)');
-                $stmt->execute([$description, $total_cost]);
+                $stmt = $db->prepare('INSERT INTO expenses (description, total_cost, expense_date) VALUES (?, ?, ?)');
+                $stmt->execute([$description, $total_cost, $expense_date]);
                 logActivity($user['id'], "Added expense: {$description} - Rs. " . number_format($total_cost), 'Expenses');
 
                 $message = 'Expense added successfully.';
@@ -80,19 +88,19 @@ $where_clauses = [];
 $params        = [];
 
 if ($filter_month > 0) {
-    $where_clauses[] = 'MONTH(created_at) = ?';
+    $where_clauses[] = 'MONTH(expense_date) = ?';
     $params[]        = $filter_month;
 }
 
 if ($filter_year > 0) {
-    $where_clauses[] = 'YEAR(created_at) = ?';
+    $where_clauses[] = 'YEAR(expense_date) = ?';
     $params[]        = $filter_year;
 }
 
 $where_sql = $where_clauses ? 'WHERE ' . implode(' AND ', $where_clauses) : '';
 
 // ── Fetch Expenses & Summaries ─────────────────────────────
-$stmt = $db->prepare("SELECT * FROM expenses {$where_sql} ORDER BY id DESC");
+$stmt = $db->prepare("SELECT * FROM expenses {$where_sql} ORDER BY expense_date DESC, id DESC");
 $stmt->execute($params);
 $expenses = $stmt->fetchAll();
 
@@ -155,7 +163,7 @@ renderHeader('Expense Management', 'expenses');
         <input type="hidden" name="id" value="<?= $edit_expense['id'] ?>">
       <?php endif; ?>
 
-      <div class="col-md-7">
+      <div class="col-md-5">
         <label class="form-label small fw-600">Description</label>
         <input type="text" class="form-control form-control-sm" name="description" 
                placeholder="e.g., Electricity Bill, Office Supplies" 
@@ -167,6 +175,12 @@ renderHeader('Expense Management', 'expenses');
         <input type="number" step="0.01" min="0.01" class="form-control form-control-sm" name="total_cost" 
                placeholder="0.00" 
                value="<?= e($edit_expense['total_cost'] ?? '') ?>" required>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label small fw-600">Expense Date</label>
+        <input type="date" class="form-control form-control-sm" name="expense_date" 
+               value="<?= e($edit_expense['expense_date'] ?? date('Y-m-d')) ?>" required>
       </div>
 
       <div class="col-md-2 d-flex align-items-end gap-2">
@@ -232,7 +246,7 @@ renderHeader('Expense Management', 'expenses');
           <th class="ps-4">ID</th>
           <th>Description</th>
           <th>Total Cost</th>
-          <th>Date Recorded</th>
+          <th>Expense Date</th>
           <th class="text-end pe-4">Actions</th>
         </tr>
       </thead>
@@ -242,7 +256,7 @@ renderHeader('Expense Management', 'expenses');
           <td class="ps-4 fw-600">#<?= $e['id'] ?></td>
           <td><?= e($e['description']) ?></td>
           <td class="fw-600 text-danger">Rs. <?= number_format($e['total_cost'], 2) ?></td>
-          <td class="small text-muted"><?= date('M d, Y h:i A', strtotime($e['created_at'])) ?></td>
+          <td><?= date('M d, Y', strtotime($e['expense_date'])) ?></td>
           <td class="text-end pe-4">
             <!-- Edit Button -->
             <a href="expenses.php?edit=<?= $e['id'] ?>&month=<?= $filter_month ?>&year=<?= $filter_year ?>" class="btn btn-sm btn-outline-primary me-1">
